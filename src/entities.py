@@ -17,11 +17,31 @@ class BaseAgent:
     vx: float = 0.0
     vy: float = 0.0
     alive: bool = True
-    energy: float = 100.0  # also used as stamina pool
+    energy: float = 100.0  # current energy (decreases with time and movement)
     age: int = 0
 
     def pos(self):
         return (self.x, self.y)
+
+    def tick_energy(self, base_rate: float) -> bool:
+        """Consume base energy per tick. Return True if still alive."""
+        if not self.alive:
+            return False
+        self.age += 1
+        self.energy -= base_rate
+        if self.energy <= 0:
+            self.alive = False
+            return False
+        return True
+
+    def consume_for_move(self, amount: float):
+        """Consume energy for movement; may kill the agent if energy hits 0."""
+        self.energy = clamp(self.energy - amount, 0.0, self.energy)
+        if self.energy <= 0:
+            self.alive = False
+
+    def gain_energy(self, amount: float, max_energy: float):
+        self.energy = clamp(self.energy + amount, 0.0, max_energy)
 
 
 @dataclass
@@ -30,21 +50,11 @@ class Prey(BaseAgent):
     food_eaten: int = 0
 
     def step(self, w, h, foods, predators, params):
-        if not self.alive:
+        if not self.tick_energy(params.prey_hunger_rate):
             return
 
-        self.age += 1
-
-        # consumo costante di energia (fame)
-        self.energy -= params.prey_hunger_rate
-        if self.energy <= 0:
-            self.alive = False
-            return
-
-        # stamina dynamics
-        self.energy = clamp(
-            self.energy + params.stamina_recover_idle, 0.0, self.dna.stamina
-        )
+        # dna.stamina is the maximum energy this agent can have
+        max_energy = self.dna.stamina
 
         # detect nearest predator
         nearest_pred = None
@@ -58,7 +68,6 @@ class Prey(BaseAgent):
                 nearest_pred = pr
 
         ax, ay = 0.0, 0.0
-        # flee if predator near
         if nearest_pred:
             dx = self.x - nearest_pred.x
             dy = self.y - nearest_pred.y
@@ -81,24 +90,23 @@ class Prey(BaseAgent):
                 ax += nx
                 ay += ny
             else:
-                # movimento casuale se nessun predatore o cibo
+                # random wandering (never stay still)
                 ax += random.uniform(-0.5, 0.5)
                 ay += random.uniform(-0.5, 0.5)
 
-        # apply movement based on speed and stamina
+        # movement consumes energy (use dna.speed and global drain param)
         speed = self.dna.speed
-        if self.energy > 1.0 and (ax != 0 or ay != 0):
-            self.energy = clamp(
-                self.energy - params.stamina_drain_move, 0.0, self.dna.stamina
-            )
+        if (ax != 0 or ay != 0) and self.energy > 1.0:
+            move_cost = params.stamina_drain_move  # per-step cost
+            # scale cost by speed (faster costs more) and normalized factor
+            self.consume_for_move(move_cost * (0.5 + 0.5 * speed))
             self.vx += ax * 0.5 * speed
             self.vy += ay * 0.5 * speed
         else:
-            # slight damping if exhausted
             self.vx *= 0.95
             self.vy *= 0.95
 
-        # clamp velocity
+        # clamp speed by dna.speed
         vmax = max(0.3, speed)
         self.vx = clamp(self.vx, -vmax, vmax)
         self.vy = clamp(self.vy, -vmax, vmax)
@@ -116,9 +124,7 @@ class Prey(BaseAgent):
         if eaten is not None:
             foods.pop(eaten)
             self.food_eaten += 1
-            self.energy = clamp(
-                self.energy + params.prey_food_energy, 0.0, self.dna.stamina
-            )
+            self.gain_energy(params.prey_food_energy, max_energy)
 
 
 @dataclass
@@ -127,21 +133,10 @@ class Predator(BaseAgent):
     kills: int = 0
 
     def step(self, w, h, preys, params):
-        if not self.alive:
+        if not self.tick_energy(params.predator_hunger_rate):
             return
 
-        self.age += 1
-
-        # consumo costante di energia (fame)
-        self.energy -= params.predator_hunger_rate
-        if self.energy <= 0:
-            self.alive = False
-            return
-
-        # stamina dynamics
-        self.energy = clamp(
-            self.energy + params.stamina_recover_idle * 0.7, 0.0, self.dna.stamina
-        )
+        max_energy = self.dna.stamina
 
         # seek nearest prey
         target: Optional[Prey] = None
@@ -161,17 +156,15 @@ class Predator(BaseAgent):
             nx, ny = normalize(dx, dy)
             ax += nx
             ay += ny
-
         else:
-            # movimento casuale se nessuna preda visibile
+            # random wandering if no prey
             ax += random.uniform(-0.5, 0.5)
             ay += random.uniform(-0.5, 0.5)
 
         speed = self.dna.speed
-        if self.energy > 1.0 and (ax != 0 or ay != 0):
-            self.energy = clamp(
-                self.energy - params.stamina_drain_move * 1.2, 0.0, self.dna.stamina
-            )
+        if (ax != 0 or ay != 0) and self.energy > 1.0:
+            move_cost = params.stamina_drain_move * 1.2
+            self.consume_for_move(move_cost * (0.5 + 0.5 * speed))
             self.vx += ax * 0.6 * speed
             self.vy += ay * 0.6 * speed
         else:
@@ -188,11 +181,10 @@ class Predator(BaseAgent):
 
         # attack if close
         if target and dist(self.pos(), target.pos()) < params.attack_distance:
-            # success chance depends on strength vs resistance
             advantage = self.dna.strength - target.dna.resistance
             base = 0.35 + max(0.0, advantage) * 0.35
             base = clamp(base, 0.05, 0.95)
             if random.random() < base:
                 target.alive = False
                 self.kills += 1
-                self.energy = clamp(self.energy + 20.0, 0.0, self.dna.stamina)
+                self.gain_energy(params.predator_food_energy, max_energy)

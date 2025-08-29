@@ -1,5 +1,4 @@
-import sys
-from src.ui import run_with_pygame
+from src.ui import run_app
 
 if __name__ == "__main__":
-    sys.exit(run_with_pygame())
+    run_app()

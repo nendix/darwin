@@ -27,7 +27,6 @@ def rand_pos(w: int, h: int) -> Tuple[float, float]:
 
 
 def wrap(x: float, y: float, w: int, h: int) -> Tuple[float, float]:
-    # toroidal world
     if x < 0:
         x += w
     if x >= w:

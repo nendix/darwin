@@ -8,7 +8,7 @@ from .utils import clamp
 class PreyGenome:
     speed: float
     vision: float
-    stamina: float
+    stamina: float  # stamina is max energy
     resistance: float
 
 
@@ -16,11 +16,11 @@ class PreyGenome:
 class PredatorGenome:
     speed: float
     vision: float
-    stamina: float
+    stamina: float  # stamina is max energy
     strength: float
 
 
-def random_prey(params) -> PreyGenome:
+def random_prey(params):
     return PreyGenome(
         speed=random.uniform(params.speed_min, params.speed_max),
         vision=random.uniform(params.vision_min, params.vision_max),
@@ -29,7 +29,7 @@ def random_prey(params) -> PreyGenome:
     )
 
 
-def random_pred(params) -> PredatorGenome:
+def random_pred(params):
     return PredatorGenome(
         speed=random.uniform(params.speed_min, params.speed_max),
         vision=random.uniform(params.vision_min, params.vision_max),
@@ -42,7 +42,7 @@ def blend(a: float, b: float, alpha: float) -> float:
     return a * (1 - alpha) + b * alpha
 
 
-def crossover_prey(p1: PreyGenome, p2: PreyGenome, rate: float) -> PreyGenome:
+def crossover_prey(p1: PreyGenome, p2: PreyGenome, rate: float):
     if random.random() > rate:
         return random.choice([p1, p2])
     t = random.random()
@@ -54,7 +54,7 @@ def crossover_prey(p1: PreyGenome, p2: PreyGenome, rate: float) -> PreyGenome:
     )
 
 
-def crossover_pred(a: PredatorGenome, b: PredatorGenome, rate: float) -> PredatorGenome:
+def crossover_pred(a: PredatorGenome, b: PredatorGenome, rate: float):
     if random.random() > rate:
         return random.choice([a, b])
     t = random.random()
@@ -72,7 +72,7 @@ def mut(val: float, std: float, lo: float, hi: float, rate: float) -> float:
     return clamp(val, lo, hi)
 
 
-def mutate_prey(g: PreyGenome, p) -> PreyGenome:
+def mutate_prey(g: PreyGenome, p):
     return PreyGenome(
         speed=mut(g.speed, p.mutation_std, p.speed_min, p.speed_max, p.mutation_rate),
         vision=mut(
@@ -87,7 +87,7 @@ def mutate_prey(g: PreyGenome, p) -> PreyGenome:
     )
 
 
-def mutate_pred(g: PredatorGenome, p) -> PredatorGenome:
+def mutate_pred(g: PredatorGenome, p):
     return PredatorGenome(
         speed=mut(g.speed, p.mutation_std, p.speed_min, p.speed_max, p.mutation_rate),
         vision=mut(
@@ -103,9 +103,11 @@ def mutate_pred(g: PredatorGenome, p) -> PredatorGenome:
 
 
 def tournament_select(pop, fitness, k: int):
-    best = None
+    # pop: list of genomes, fitness: list of floats with same length
+    best_i = None
+    n = len(pop)
     for _ in range(k):
-        i = random.randrange(len(pop))
-        if best is None or fitness[i] > fitness[best]:
-            best = i
-    return pop[best]
+        i = random.randrange(n)
+        if best_i is None or fitness[i] > fitness[best_i]:
+            best_i = i
+    return pop[best_i]
