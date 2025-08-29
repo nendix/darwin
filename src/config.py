@@ -34,8 +34,8 @@ class Params:
 
     # Simulation / GA
     generations: int = 25
-    steps_per_generation: int = 3000
-    elitism: int = 4
+    steps_per_generation: int = 1500
+    elitism: int = 1
     mutation_rate: float = 0.12
     mutation_std: float = 0.12
     crossover_rate: float = 0.85

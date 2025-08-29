@@ -1,19 +1,20 @@
 import pygame as pg
 import sys
 from pathlib import Path
-import matplotlib.pyplot as plt
 
+from .plotter import make_plots
 from .config import load_params, save_params
 from .simulation import World
 from .utils import clamp
 
 # Colors
-BG = (10, 10, 10)
-PREY_COLOR = (120, 180, 255)  # blu chiaro
-PRED_COLOR = (220, 70, 70)  # rosso
-FOOD_COLOR = (70, 200, 120)  # verde chiaro
+BLACK = (10, 10, 10)
+BLUE = (120, 180, 255)  # blu chiaro
+RED = (220, 70, 70)  # rosso
+GREEN = (70, 200, 120)  # verde chiaro
 WHITE = (240, 240, 240)
 GREY = (120, 120, 120)
+YELLOW = (255, 200, 80)
 
 FONT_NAME = None  # default font
 
@@ -23,15 +24,22 @@ def draw_text(surf, txt, x, y, color=WHITE, size=16):
     surf.blit(font.render(txt, True, color), (x, y))
 
 
+def text_width(txt, size=16):
+    font = pg.font.Font(FONT_NAME, size)
+    width, _ = font.size(txt)
+    return width
+
+
 def draw_world(screen, world, params):
-    screen.fill(BG)
+    screen.fill(BLACK)
+
     # foods
     for f in world.foods:
-        pg.draw.circle(screen, FOOD_COLOR, (int(f.pos[0]), int(f.pos[1])), 4)
+        pg.draw.circle(screen, GREEN, (int(f.pos[0]), int(f.pos[1])), 4)
 
     # preys
     for p in world.preys:
-        pg.draw.circle(screen, PREY_COLOR, (int(p.x), int(p.y)), 5)
+        pg.draw.circle(screen, BLUE, (int(p.x), int(p.y)), 5)
         if params.draw_vision:
             pg.draw.circle(
                 screen, (100, 150, 255), (int(p.x), int(p.y)), int(p.dna.vision), 1
@@ -39,7 +47,7 @@ def draw_world(screen, world, params):
 
     # predators
     for pr in world.predators:
-        pg.draw.circle(screen, PRED_COLOR, (int(pr.x), int(pr.y)), 6)
+        pg.draw.circle(screen, RED, (int(pr.x), int(pr.y)), 6)
         if params.draw_vision:
             pg.draw.circle(
                 screen, (180, 80, 80), (int(pr.x), int(pr.y)), int(pr.dna.vision), 1
@@ -49,65 +57,81 @@ def draw_world(screen, world, params):
     draw_text(
         screen,
         f"Gen {world.generation+1}/{params.generations}  t:{world.time}/{params.steps_per_generation}",
-        10,
+        12,
         8,
         WHITE,
         16,
     )
     draw_text(
         screen,
-        f"Prede: {len(world.preys)}  Predatori: {len(world.predators)}  Cibo: {len(world.foods)}",
-        10,
+        f"Prede: {len(world.preys)}  Predatori: {len(world.predators)}",
+        12,
         28,
         WHITE,
         16,
     )
     draw_text(
         screen,
-        f"Speed x{params.sim_speed}  [+/-]  |  Visione [V]  |  Menu [M]  |  ESC esci",
-        10,
+        f"Speed x{params.sim_speed}  [+/-]  |  Vision [V]  |  Menu [M]  |  Exit [Q] ",
+        12,
         48,
         GREY,
-        14,
+        16,
     )
 
 
 def draw_menu(screen, params, cursor):
     screen.fill((12, 12, 12))
+
+    # Titolo centrato
+    txt = "DARWIN - Parametri (J/K seleziona, H/L modifica, S salva, SPACE avvia)"
+    draw_text(
+        screen, txt, (screen.get_width() - text_width(txt, 24)) / 2, 12, WHITE, 24
+    )
+
+    # Entries
+    entries = [
+        ("population_prey", params.population_prey, 4, 300, 1),
+        ("population_pred", params.population_pred, 2, 100, 1),
+        ("food_count", params.food_count, 0, 900, 1),
+        ("generations", params.generations, 1, 100, 1),
+        ("draw_vision", params.draw_vision, 0, 1, 1),
+        ("sim_speed", params.sim_speed, 1, 10, 1),
+    ]
+    y = 80
+    for i, (k, val, lo, hi, step) in enumerate(entries):
+        display = val if not isinstance(val, bool) else ("ON" if val else "OFF")
+        line = f"{k:>20}: {display}"
+
+        if i == cursor:
+            draw_text(
+                screen,
+                line,
+                (screen.get_width() - text_width(line, 32)) / 2,
+                y + i * 32,
+                YELLOW,
+                32,
+            )
+        else:
+            draw_text(
+                screen,
+                line,
+                (screen.get_width() - text_width(line, 28)) / 2,
+                y + i * 32,
+                WHITE,
+                28,
+            )
+
+    txt = "Start [SPACE] | Exit [Q]"
     draw_text(
         screen,
-        "DARWIN - Parametri (↑↓ seleziona, ←→ modifica, S salva, Invio avvia)",
-        18,
-        14,
-        WHITE,
-        16,
+        txt,
+        (screen.get_width() - text_width(txt, 24)) / 2,
+        y + len(entries) * 32 + 20,
+        GREY,
+        24,
     )
-    entries = [
-        ("population_prey", params.population_prey, 4, 200, 1),
-        ("population_pred", params.population_pred, 2, 100, 1),
-        ("food_count", params.food_count, 0, 300, 1),
-        ("steps_per_generation", params.steps_per_generation, 200, 20000, 100),
-        ("generations", params.generations, 1, 500, 1),
-        ("draw_vision", params.draw_vision, 0, 1, 1),
-        ("sim_speed", params.sim_speed, 1, 8, 1),
-    ]
-    y = 60
-    for i, (k, val, lo, hi, step) in enumerate(entries):
-        sel = ">>" if i == cursor else "  "
-        display = val
-        if isinstance(val, bool):
-            display = "ON" if val else "OFF"
-        draw_text(
-            screen,
-            f"{sel} {k:>20}: {display}",
-            40,
-            y + i * 28,
-            (255, 200, 80) if i == cursor else WHITE,
-            18,
-        )
-    draw_text(
-        screen, "[Invio] Avvia  |  [ESC] Esci", 40, y + len(entries) * 28 + 12, GREY, 14
-    )
+
     return entries
 
 
@@ -115,108 +139,75 @@ def adjust_param(params, key, lo, hi, step, direction):
     val = getattr(params, key)
     if isinstance(val, bool):
         setattr(params, key, not val)
-        return
-    if isinstance(val, int):
-        val += direction * step
-        val = int(clamp(val, lo, hi))
+    elif isinstance(val, int):
+        setattr(params, key, int(clamp(val + direction * step, lo, hi)))
     else:
-        val += direction * step
-        val = float(clamp(val, lo, hi))
-    setattr(params, key, val)
+        setattr(params, key, float(clamp(val + direction * step, lo, hi)))
 
 
-def make_plots(world: World):
-    out_dir = Path("output")
-    out_dir.mkdir(exist_ok=True)
-    gens = [s.generation + 1 for s in world.history]
-    prey_pop = [s.prey_pop for s in world.history]
-    pred_pop = [s.pred_pop for s in world.history]
-    prey_fit = [s.prey_fitness_avg for s in world.history]
-    pred_fit = [s.pred_fitness_avg for s in world.history]
-
-    plt.figure(figsize=(8, 4.2))
-    plt.plot(gens, prey_pop, label="Prede", color=(0.47, 0.7, 1.0))
-    plt.plot(gens, pred_pop, label="Predatori", color=(0.86, 0.27, 0.27))
-    plt.xlabel("Generazione")
-    plt.ylabel("Popolazione")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(out_dir / "populations.png", dpi=150)
-    plt.close()
-
-    plt.figure(figsize=(8, 4.2))
-    plt.plot(gens, prey_fit, label="Prey fitness media", color=(0.47, 0.7, 1.0))
-    plt.plot(gens, pred_fit, label="Predator fitness media", color=(0.86, 0.27, 0.27))
-    plt.xlabel("Generazione")
-    plt.ylabel("Fitness media")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(out_dir / "fitness.png", dpi=150)
-    plt.close()
+def handle_menu_events(events, params, cursor, entries):
+    for event in events:
+        if event.type == pg.QUIT:
+            pg.quit()
+            sys.exit(0)
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_q:
+                pg.quit()
+                sys.exit(0)
+            if event.key == pg.K_SPACE:
+                return cursor, False
+            if event.key == pg.K_s:
+                save_params(params)
+            if event.key == pg.K_k:
+                cursor = max(0, cursor - 1)
+            if event.key == pg.K_j:
+                cursor = min(len(entries) - 1, cursor + 1)
+            if event.key in (pg.K_h, pg.K_l):
+                direction = -1 if event.key == pg.K_h else 1
+                k, v, lo, hi, step = entries[cursor]
+                adjust_param(params, k, lo, hi, step, direction)
+    return cursor, True
 
 
-def run_app():
-    pg.init()
-    params = load_params()
-    screen = pg.display.set_mode((params.world_w, params.world_h))
-    pg.display.set_caption("Darwin - Predator & Prey GA")
-    clock = pg.time.Clock()
+def handle_simulation_events(events, params):
+    for event in events:
+        if event.type == pg.QUIT:
+            return False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_q:
+                return False
+            elif event.key == pg.K_v:
+                params.draw_vision = not params.draw_vision
+            elif event.key == pg.K_m:
+                save_params(params)
+                run_app()
+            elif event.key == pg.K_s:
+                save_params(params)
+            elif event.key in (pg.K_PLUS, pg.K_EQUALS):
+                params.sim_speed = clamp(params.sim_speed + 1, 1, 10)
+            elif event.key in (pg.K_MINUS, pg.K_UNDERSCORE):
+                params.sim_speed = clamp(params.sim_speed - 1, 1, 10)
+    return True
 
-    # Menu
+
+def run_menu(screen, clock, params):
     cursor = 0
     in_menu = True
     while in_menu:
         entries = draw_menu(screen, params, cursor)
         pg.display.flip()
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit(0)
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    pg.quit()
-                    sys.exit(0)
-                if event.key == pg.K_RETURN:
-                    in_menu = False
-                if event.key == pg.K_s:
-                    save_params(params)
-                if event.key == pg.K_UP:
-                    cursor = max(0, cursor - 1)
-                if event.key == pg.K_DOWN:
-                    cursor = min(len(entries) - 1, cursor + 1)
-                if event.key in (pg.K_LEFT, pg.K_RIGHT):
-                    direction = -1 if event.key == pg.K_LEFT else 1
-                    k, v, lo, hi, step = entries[cursor]
-                    adjust_param(params, k, lo, hi, step, direction)
+        cursor, in_menu = handle_menu_events(pg.event.get(), params, cursor, entries)
         clock.tick(30)
 
-    # Simulation start
+
+def run_simulation(screen, clock, params):
     world = World(params)
     world.reset_population()
     running = True
-
     while running:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                running = False
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    running = False
-                elif event.key == pg.K_v:
-                    params.draw_vision = not params.draw_vision
-                elif event.key == pg.K_m:
-                    save_params(params)
-                    return run_app()
-                elif event.key == pg.K_s:
-                    save_params(params)
-                elif event.key in (pg.K_PLUS, pg.K_EQUALS):
-                    params.sim_speed = clamp(params.sim_speed + 1, 1, 8)
-                elif event.key in (pg.K_MINUS, pg.K_UNDERSCORE):
-                    params.sim_speed = clamp(params.sim_speed - 1, 1, 8)
+        if not handle_simulation_events(pg.event.get(), params):
+            running = False
 
-        # advance steps
         for _ in range(int(params.sim_speed)):
             world.step()
             if world.time >= params.steps_per_generation:
@@ -230,16 +221,35 @@ def run_app():
         pg.display.flip()
         clock.tick(params.fps_limit)
 
-    # finished
     make_plots(world)
+    return params
 
-    # final screen
-    screen.fill(BG)
+
+def run_app():
+    pg.init()
+    params = load_params()
+    screen = pg.display.set_mode((params.world_w, params.world_h))
+    pg.display.set_caption("Darwin")
+    clock = pg.time.Clock()
+
+    # Run menu
+    run_menu(screen, clock, params)
+
+    # Run simulation
+    params = run_simulation(screen, clock, params)
+
+    # Final screen
+    screen.fill(BLACK)
     out_dir = Path("output")
-    draw_text(screen, "Simulazione terminata.", 40, 40, WHITE, 22)
-    draw_text(screen, f"Grafici salvati in {out_dir}/", 40, 80, GREY, 16)
+    txt = "Simulation ended."
     draw_text(
-        screen, "Premi ESC per uscire o M per tornare al menu.", 40, 110, GREY, 16
+        screen, txt, (screen.get_width() - text_width(txt, 72)) / 2, 40, WHITE, 72
+    )
+    txt = f"Graphs saved in {out_dir}/"
+    draw_text(screen, txt, (screen.get_width() - text_width(txt, 36)) / 2, 80, GREY, 36)
+    txt = "Exit [Q] | Menu [M]"
+    draw_text(
+        screen, txt, (screen.get_width() - text_width(txt, 36)) / 2, 110, GREY, 36
     )
     pg.display.flip()
 
@@ -249,11 +259,11 @@ def run_app():
             if event.type == pg.QUIT:
                 waiting = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
+                if event.key == pg.K_q:
                     waiting = False
                 if event.key == pg.K_m:
                     save_params(params)
-                    return run_app()
+                    run_app()
         pg.time.wait(50)
 
     pg.quit()
