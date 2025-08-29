@@ -1,0 +1,28 @@
+Vorrei creare un progetto di intelligenza artificiale che implementi gli algoritmi genetici, l'idea è questa: simulare un ambiente di predatori e prede.
+Implementalo in python con un interfaccia grafica 2D usando la libreria pygame.
+L'obiettivo dei predatori è cacciare le prede nel modo più efficiente possibile (predator fitness).
+L'obiettivo delle prede è sfuggire dai predatori e procurarsi cibo nel modo più efficiente possibile (prey fitness).
+Il genoma delle prede avrà queste caratteristiche: velocità, visione, stamina e resistenza (agli attacchi).
+Il genoma dei predatori avrà queste caratteristiche: velocità, visione, stamina e forza (degli attacchi)
+
+Le caratteristiche del genoma serviranno a queste funzioni:
+- velocità: determina la velocità di movimento della preda e del predatore
+- visione: determina il campo visivo della preda e del predatore
+- stamina: determina l'energia massima della preda e del predatore
+- resistenza: determina la resistenza agli attacchi del predatore verso la preda
+- forza: determina la forza degli attacchi del predatore verso la preda
+
+L'energia si consuma con il passare del tempo e con il movimento e si ricarica mangiando.
+Le entità non possono restare ferme, quindi se non trovano nulla nel loro raggio visivo si muoveranno in una direzione casuale (vagabondaggio).
+Le prede saranno blu chiaro, i predatori saranno rossi, il cibo verde e lo sfondo nero.
+
+Ricorda di usare best practice e design patterns ove possibile.
+
+Inoltre vorrei che l'utente possa modificare alcuni parametri della simulazione, ad esempio il numero di prede, predatori e cibo o il toggle del raggio visivo.
+Vorrei che vengano prodotti dei grafici che mostrano l'andamento delle due popolazioni e il loro punteggio di fitness alla fine della simulazione.
+
+Non dimenticare di inviarmi il requirements.txt
+
+Ti chiedo di strutturare in maniera intelligente i file in modo che le varie parti del codice siano separate.
+
+Infine vorrei che tu mi inviassi i file singolarmente in modo che io possa copiarli facilmente, il nome del progetto sarà darwin
