@@ -1,7 +1,7 @@
 import pygame as pg
 import sys
 from .common import draw_text, text_width
-from .style import WHITE, GREY, YELLOW
+from .style import BLACK, WHITE, GREY, YELLOW
 from ..config import save_params
 from ..utils import clamp
 
@@ -70,17 +70,17 @@ def draw_parameter_row(screen, param_info, value, x, y, is_selected=False):
         value_text = "ON" if value else "OFF"
     else:
         value_text = str(value)
-    
+
     # Calculate right-aligned position for the value
     value_width = text_width(value_text, 28)
     value_right_edge = x + 340  # Total row width
     value_x = value_right_edge - value_width
-    
+
     draw_text(screen, value_text, value_x, y, text_color, 28)
 
 
 def draw_menu(screen, params, cursor):
-    screen.fill((15, 15, 20))  # Darker background
+    screen.fill(BLACK)
 
     # Main title
     title = "Darwin"

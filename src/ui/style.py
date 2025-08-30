@@ -1,5 +1,5 @@
 # Colors
-BLACK = (10, 10, 10)
+BLACK = (15, 15, 20)
 BLUE = (120, 180, 255)
 RED = (220, 70, 70)
 GREEN = (70, 200, 120)
@@ -7,4 +7,4 @@ WHITE = (240, 240, 240)
 GREY = (120, 120, 120)
 YELLOW = (255, 200, 80)
 
-FONT_NAME = None  
+FONT_NAME = None

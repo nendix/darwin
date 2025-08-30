@@ -7,26 +7,35 @@ from .menu_screen import show_menu_screen
 
 
 def show_final_screen(screen, params):
-    screen.fill(BLACK)
+    screen.fill(BLACK)  # Match menu screen dark background
     out_dir = Path("output")
 
-    # Titolo
-    txt = "Simulation ended."
-    draw_text(
-        screen, txt, (screen.get_width() - text_width(txt, 72)) / 2, 40, WHITE, 72
-    )
+    # Calculate vertical centering
+    screen_height = screen.get_height()
+    total_text_height = (
+        48 + 40 + 24 + 40 + 24
+    )  # subtitle + gap + info + gap + instructions
+    start_y = (screen_height - total_text_height) / 2
 
-    # Sottotitolo
-    txt = f"Graphs saved in {out_dir}/"
-    draw_text(
-        screen, txt, (screen.get_width() - text_width(txt, 36)) / 2, 100, GREY, 36
-    )
+    # Subtitle
+    subtitle = "Simulation Complete"
+    subtitle_x = (screen.get_width() - text_width(subtitle, 48)) / 2
+    draw_text(screen, subtitle, subtitle_x, start_y, WHITE, 48)
 
-    # Footer
-    txt = "Exit [Q] | Menu [M]"
-    draw_text(
-        screen, txt, (screen.get_width() - text_width(txt, 36)) / 2, 160, GREY, 36
-    )
+    # Information text
+    info_text = f"Graphs saved in {out_dir}/"
+    info_x = (screen.get_width() - text_width(info_text, 24)) / 2
+    draw_text(screen, info_text, info_x, start_y + 68, GREY, 24)
+
+    # Control instructions - match menu screen style
+    instructions_y = start_y + 108
+    instructions = [
+        "Actions: [M] Return to Menu | [Q] Exit",
+    ]
+
+    for i, instruction in enumerate(instructions):
+        instr_x = (screen.get_width() - text_width(instruction, 24)) / 2
+        draw_text(screen, instruction, instr_x, instructions_y + i * 30, GREY, 24)
 
     pg.display.flip()
 
