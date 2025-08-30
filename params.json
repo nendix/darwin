@@ -1,9 +1,9 @@
 {
   "world_w": 1500,
   "world_h": 900,
-  "population_prey": 200,
-  "population_pred": 100,
-  "food_count": 90,
+  "population_prey": 100,
+  "population_pred": 50,
+  "food_count": 100,
   "speed_min": 0.6,
   "speed_max": 3.0,
   "vision_min": 40.0,
@@ -15,7 +15,7 @@
   "strength_min": 0.2,
   "strength_max": 1.5,
   "generations": 50,
-  "steps_per_generation": 1500,
+  "steps_per_generation": 2000,
   "elitism": 1,
   "mutation_rate": 0.13,
   "mutation_std": 0.16,
@@ -29,5 +29,5 @@
   "attack_distance": 10.0,
   "fps_limit": 60,
   "draw_vision": false,
-  "sim_speed": 8
+  "sim_speed": 10
 }
