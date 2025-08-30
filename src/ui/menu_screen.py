@@ -140,7 +140,8 @@ def adjust_param(params, param_info, direction):
         setattr(params, key, float(new_val))
 
 
-def handle_menu_events(events, params, cursor, param_infos):
+def handle_menu_events(events, params, cursor, param_infos, key_repeat_delay):
+    # Handle discrete events first
     for event in events:
         if event.type == pg.QUIT:
             pg.quit()
@@ -151,34 +152,50 @@ def handle_menu_events(events, params, cursor, param_infos):
                 pg.quit()
                 sys.exit(0)
             elif event.key == pg.K_SPACE:
-                return cursor, False  # Start simulation
+                return cursor, False, key_repeat_delay  # Start simulation
             elif event.key == pg.K_s:
                 save_params(params)
-            elif event.key in (pg.K_k, pg.K_UP):
-                cursor = max(0, cursor - 1)
-            elif event.key in (pg.K_j, pg.K_DOWN):
-                cursor = min(len(param_infos) - 1, cursor + 1)
-            elif event.key in (pg.K_h, pg.K_LEFT):
-                direction = -1
-                param_info = param_infos[cursor]
-                adjust_param(params, param_info, direction)
-            elif event.key in (pg.K_l, pg.K_RIGHT):
-                direction = 1
-                param_info = param_infos[cursor]
-                adjust_param(params, param_info, direction)
 
-    return cursor, True
+    # Handle held keys with timing control
+    if key_repeat_delay <= 0:
+        keys = pg.key.get_pressed()
+
+        # Navigation
+        if keys[pg.K_k] or keys[pg.K_UP]:
+            cursor = max(0, cursor - 1)
+            key_repeat_delay = 8
+        elif keys[pg.K_j] or keys[pg.K_DOWN]:
+            cursor = min(len(param_infos) - 1, cursor + 1)
+            key_repeat_delay = 8
+
+        # Parameter adjustment
+        if keys[pg.K_h] or keys[pg.K_LEFT]:
+            direction = -1
+            param_info = param_infos[cursor]
+            adjust_param(params, param_info, direction)
+            key_repeat_delay = 4
+        elif keys[pg.K_l] or keys[pg.K_RIGHT]:
+            direction = 1
+            param_info = param_infos[cursor]
+            adjust_param(params, param_info, direction)
+            key_repeat_delay = 4
+    else:
+        key_repeat_delay -= 1
+
+    return cursor, True, key_repeat_delay
 
 
 def show_menu_screen(screen, clock, params):
+    """Display the menu screen with key holding support."""
     cursor = 0
     in_menu_screen = True
+    key_repeat_delay = 0  # Timing control for key holding
 
     while in_menu_screen:
         param_infos = draw_menu(screen, params, cursor)
 
         pg.display.flip()
-        cursor, in_menu_screen = handle_menu_events(
-            pg.event.get(), params, cursor, param_infos
+        cursor, in_menu_screen, key_repeat_delay = handle_menu_events(
+            pg.event.get(), params, cursor, param_infos, key_repeat_delay
         )
         clock.tick(60)  # Higher framerate for smoother interactions
