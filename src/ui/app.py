@@ -2,7 +2,7 @@ import pygame as pg
 
 from ..config import load_params
 from .menu_screen import run_menu
-from .simulation_screen import draw_world
+from .simulation_screen import run_simulation
 from .final_screen import run_final_screen
 
 
@@ -18,7 +18,7 @@ def run_app():
     run_menu(screen, clock, params)
 
     # Run simulation
-    params = draw_world(screen, clock, params)
+    params = run_simulation(screen, clock, params)
 
     # Final screen
     run_final_screen(screen, params)

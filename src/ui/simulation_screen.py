@@ -3,8 +3,9 @@ import pygame as pg
 from .common import draw_text
 from .style import BLACK, BLUE, RED, GREEN, WHITE, GREY
 from ..config import save_params
-from .menu_screen import run_menu
 from ..utils import clamp
+from ..simulation import World
+from ..plotter import make_plots
 
 
 def draw_world(screen, world, params):
@@ -70,11 +71,8 @@ def handle_simulation_events(events, params):
                 params.draw_vision = not params.draw_vision
             elif event.key == pg.K_m:
                 save_params(params)
-                run_menu(
-                    screen=pg.display.get_surface(),
-                    clock=pg.time.Clock(),
-                    params=params,
-                )
+                # Return to menu - this will be handled by the calling function
+                return "menu"
             elif event.key == pg.K_s:
                 save_params(params)
             elif event.key in (pg.K_PLUS, pg.K_EQUALS):
@@ -82,3 +80,38 @@ def handle_simulation_events(events, params):
             elif event.key in (pg.K_MINUS, pg.K_UNDERSCORE):
                 params.sim_speed = clamp(params.sim_speed - 1, 1, 10)
     return True
+
+
+def run_simulation(screen, clock, params):
+    """Esegue la simulazione principale."""
+    world = World(params)
+    world.reset_population()
+    running = True
+    
+    while running:
+        event_result = handle_simulation_events(pg.event.get(), params)
+        
+        if event_result == "menu":
+            # Return to menu
+            from .menu_screen import run_menu
+            run_menu(screen, clock, params)
+            return params
+        elif not event_result:
+            # Quit simulation
+            running = False
+
+        for _ in range(int(params.sim_speed)):
+            world.step()
+            if world.time >= params.steps_per_generation:
+                world.end_generation()
+                if world.generation + 1 >= params.generations:
+                    running = False
+                    break
+                world.new_generation()
+
+        draw_world(screen, world, params)
+        pg.display.flip()
+        clock.tick(params.fps_limit)
+
+    make_plots(world)
+    return params
