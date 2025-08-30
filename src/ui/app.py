@@ -1,9 +1,9 @@
 import pygame as pg
 
 from ..config import load_params
-from .menu_screen import run_menu
-from .simulation_screen import run_simulation
-from .final_screen import run_final_screen
+from .menu_screen import show_menu_screen
+from .simulation_screen import show_simulation_screen
+from .final_screen import show_final_screen
 
 
 def run_app():
@@ -15,12 +15,12 @@ def run_app():
     clock = pg.time.Clock()
 
     # Run menu
-    run_menu(screen, clock, params)
+    show_menu_screen(screen, clock, params)
 
     # Run simulation
-    params = run_simulation(screen, clock, params)
+    params = show_simulation_screen(screen, clock, params)
 
     # Final screen
-    run_final_screen(screen, params)
+    show_final_screen(screen, params)
 
     pg.quit()

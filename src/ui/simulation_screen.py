@@ -82,30 +82,31 @@ def handle_simulation_events(events, params):
     return True
 
 
-def run_simulation(screen, clock, params):
+def show_simulation_screen(screen, clock, params):
     """Esegue la simulazione principale."""
     world = World(params)
     world.reset_population()
-    running = True
-    
-    while running:
+    in_simulation_screen = True
+
+    while in_simulation_screen:
         event_result = handle_simulation_events(pg.event.get(), params)
-        
+
         if event_result == "menu":
             # Return to menu
-            from .menu_screen import run_menu
-            run_menu(screen, clock, params)
+            from .menu_screen import show_menu_screen
+
+            show_menu_screen(screen, clock, params)
             return params
         elif not event_result:
             # Quit simulation
-            running = False
+            in_simulation_screen = False
 
         for _ in range(int(params.sim_speed)):
             world.step()
             if world.time >= params.steps_per_generation:
                 world.end_generation()
                 if world.generation + 1 >= params.generations:
-                    running = False
+                    in_simulation_screen = False
                     break
                 world.new_generation()
 

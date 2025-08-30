@@ -3,10 +3,10 @@ from pathlib import Path
 from .common import draw_text, text_width
 from .style import BLACK, WHITE, GREY
 from ..config import save_params
-from .menu_screen import run_menu
+from .menu_screen import show_menu_screen
 
 
-def run_final_screen(screen, params):
+def show_final_screen(screen, params):
     screen.fill(BLACK)
     out_dir = Path("output")
 
@@ -30,17 +30,17 @@ def run_final_screen(screen, params):
 
     pg.display.flip()
 
-    waiting = True
-    while waiting:
+    in_final_screen = True
+    while in_final_screen:
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                waiting = False
+                in_final_screen = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_q:
-                    waiting = False
+                    in_final_screen = False
                 if event.key == pg.K_m:
                     save_params(params)
-                    run_menu(screen, pg.time.Clock(), params)
+                    show_menu_screen(screen, pg.time.Clock(), params)
         pg.time.wait(50)
 
     pg.quit()

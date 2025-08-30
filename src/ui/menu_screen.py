@@ -89,11 +89,13 @@ def handle_menu_events(events, params, cursor, entries):
     return cursor, True
 
 
-def run_menu(screen, clock, params):
+def show_menu_screen(screen, clock, params):
     cursor = 0
-    in_menu = True
-    while in_menu:
+    in_menu_screen = True
+    while in_menu_screen:
         entries = draw_menu(screen, params, cursor)
         pg.display.flip()
-        cursor, in_menu = handle_menu_events(pg.event.get(), params, cursor, entries)
+        cursor, in_menu_screen = handle_menu_events(
+            pg.event.get(), params, cursor, entries
+        )
         clock.tick(30)

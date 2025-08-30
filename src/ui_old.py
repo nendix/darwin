@@ -190,7 +190,7 @@ def handle_simulation_events(events, params):
     return True
 
 
-def run_menu(screen, clock, params):
+def show_menu_screen(screen, clock, params):
     cursor = 0
     in_menu = True
     while in_menu:
@@ -200,7 +200,7 @@ def run_menu(screen, clock, params):
         clock.tick(30)
 
 
-def run_simulation(screen, clock, params):
+def show_simulation_screen(screen, clock, params):
     world = World(params)
     world.reset_population()
     running = True
@@ -233,10 +233,10 @@ def run_app():
     clock = pg.time.Clock()
 
     # Run menu
-    run_menu(screen, clock, params)
+    show_menu_screen(screen, clock, params)
 
     # Run simulation
-    params = run_simulation(screen, clock, params)
+    params = show_simulation_screen(screen, clock, params)
 
     # Final screen
     screen.fill(BLACK)
