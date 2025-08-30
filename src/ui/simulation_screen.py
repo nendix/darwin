@@ -32,35 +32,47 @@ def draw_world(screen, world, params):
                 screen, (180, 80, 80), (int(pr.x), int(pr.y)), int(pr.dna.vision), 1
             )
 
-    # HUD
     draw_text(
         screen,
-        f"Gen {world.generation+1}/{params.generations}  t:{world.time}/{params.steps_per_generation}",
-        12,
-        8,
+        f"Generation: {world.generation+1}/{params.generations}",
+        20,
+        20,
         WHITE,
-        16,
+        22,
     )
     draw_text(
         screen,
-        f"Prede: {len(world.preys)}  Predatori: {len(world.predators)}",
-        12,
-        28,
+        f"Step: {world.time}/{params.steps_per_generation}",
+        20,
+        50,
         WHITE,
-        16,
+        22,
     )
     draw_text(
         screen,
-        f"Speed x{params.sim_speed}  [+/-]  |  Vision [V]  |  Menu [M]  |  Exit [Q] ",
-        12,
-        48,
+        f"Prey: {len(world.preys)}  |  Predators: {len(world.predators)}",
+        20,
+        80,
+        WHITE,
+        22,
+    )
+
+    # Bottom controls with consistent styling
+    controls_text = (
+        f"Speed x{params.sim_speed} [+/-]  |  Vision [V]  |  Menu [M]  |  Exit [Q]"
+    )
+    controls_y = screen.get_height() - 30
+    draw_text(
+        screen,
+        controls_text,
+        20,
+        controls_y,
         GREY,
-        16,
+        22,
     )
 
 
 def handle_simulation_events(events, params):
-    """Gestisce input utente durante la simulazione."""
     for event in events:
         if event.type == pg.QUIT:
             return False
@@ -71,19 +83,17 @@ def handle_simulation_events(events, params):
                 params.draw_vision = not params.draw_vision
             elif event.key == pg.K_m:
                 save_params(params)
-                # Return to menu - this will be handled by the calling function
                 return "menu"
             elif event.key == pg.K_s:
                 save_params(params)
             elif event.key in (pg.K_PLUS, pg.K_EQUALS):
-                params.sim_speed = clamp(params.sim_speed + 1, 1, 10)
+                params.sim_speed = clamp(params.sim_speed + 1, 1, 12)
             elif event.key in (pg.K_MINUS, pg.K_UNDERSCORE):
-                params.sim_speed = clamp(params.sim_speed - 1, 1, 10)
+                params.sim_speed = clamp(params.sim_speed - 1, 1, 12)
     return True
 
 
 def show_simulation_screen(screen, clock, params):
-    """Esegue la simulazione principale."""
     world = World(params)
     world.reset_population()
     in_simulation_screen = True
@@ -92,13 +102,11 @@ def show_simulation_screen(screen, clock, params):
         event_result = handle_simulation_events(pg.event.get(), params)
 
         if event_result == "menu":
-            # Return to menu
             from .menu_screen import show_menu_screen
 
             show_menu_screen(screen, clock, params)
             return params
         elif not event_result:
-            # Quit simulation
             in_simulation_screen = False
 
         for _ in range(int(params.sim_speed)):
@@ -114,7 +122,6 @@ def show_simulation_screen(screen, clock, params):
         pg.display.flip()
         clock.tick(params.fps_limit)
 
-    # Create individual charts
     create_population_chart(world)
     create_fitness_chart(world)
     return params
