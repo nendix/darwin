@@ -5,7 +5,7 @@ from .style import BLACK, BLUE, RED, GREEN, WHITE, GREY
 from ..config import save_params
 from ..utils import clamp
 from ..simulation import World
-from ..plotter import make_plots
+from ..analytics import create_population_chart, create_fitness_chart
 
 
 def draw_world(screen, world, params):
@@ -114,5 +114,7 @@ def show_simulation_screen(screen, clock, params):
         pg.display.flip()
         clock.tick(params.fps_limit)
 
-    make_plots(world)
+    # Create individual charts
+    create_population_chart(world)
+    create_fitness_chart(world)
     return params
