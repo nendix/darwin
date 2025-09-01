@@ -5,7 +5,7 @@ Handles creation and saving of population, fitness, and genome analysis charts.
 
 from pathlib import Path
 import matplotlib.pyplot as plt
-from ..simulation import World
+from ..core import World
 
 
 def create_population_chart(world: World, output_dir: str = "output"):

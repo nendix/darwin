@@ -1,9 +1,8 @@
 import pygame as pg
 import sys
-from .common import draw_text, text_width
-from .style import BLACK, WHITE, GREY, YELLOW
-from ..config import save_params
-from ..utils import clamp
+from ..components import draw_text, text_width, BLACK, WHITE, GREY, YELLOW
+from ...config import save_params
+from ...utils.math_utils import clamp
 
 
 def get_parameter_info():

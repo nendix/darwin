@@ -1,11 +1,10 @@
 # ui/simulation_screen.py
 import pygame as pg
-from .common import draw_text
-from .style import BLACK, BLUE, RED, GREEN, WHITE, GREY
-from ..config import save_params
-from ..utils import clamp
-from ..simulation import World
-from ..analytics import create_population_chart, create_fitness_chart
+from ..components import draw_text, BLACK, BLUE, RED, GREEN, WHITE, GREY
+from ...config import save_params
+from ...utils.math_utils import clamp
+from ...core import World
+from ...analytics import create_population_chart, create_fitness_chart
 
 
 def draw_world(screen, world, params):
@@ -127,7 +126,7 @@ def show_simulation_screen(screen, clock, params):
     create_fitness_chart(world)
     
     # Import and create the new genome analysis charts
-    from ..analytics.charts import create_best_prey_genome_chart, create_best_predator_genome_chart, create_genome_comparison_chart
+    from ...analytics.charts import create_best_prey_genome_chart, create_best_predator_genome_chart, create_genome_comparison_chart
     create_best_prey_genome_chart(world)
     create_best_predator_genome_chart(world)
     create_genome_comparison_chart(world)

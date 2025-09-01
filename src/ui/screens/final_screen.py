@@ -1,8 +1,7 @@
 import pygame as pg
 from pathlib import Path
-from .common import draw_text, text_width
-from .style import BLACK, WHITE, GREY
-from ..config import save_params
+from ..components import draw_text, text_width, BLACK, WHITE, GREY
+from ...config import save_params
 from .menu_screen import show_menu_screen
 
 

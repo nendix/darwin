@@ -16,21 +16,21 @@ class Params:
     population_pred: int = 14
     food_count: int = 60
 
-    # DNA bounds
-    speed_min: float = 0.6
-    speed_max: float = 3.0
+    # DNA bounds (1-100 range for all traits)
+    speed_min: float = 1.0
+    speed_max: float = 100.0
 
-    vision_min: float = 40.0
-    vision_max: float = 220.0
+    vision_min: float = 1.0
+    vision_max: float = 100.0
 
-    stamina_min: float = 40.0
-    stamina_max: float = 240.0  # Note: stamina is DNA -> max energy
+    stamina_min: float = 1.0
+    stamina_max: float = 100.0  # Note: stamina is DNA -> max energy
 
-    resist_min: float = 0.0
-    resist_max: float = 1.0
+    resist_min: float = 1.0
+    resist_max: float = 100.0
 
-    strength_min: float = 0.2
-    strength_max: float = 1.5
+    strength_min: float = 1.0
+    strength_max: float = 100.0
 
     # Simulation / GA
     generations: int = 25

@@ -1,2 +1,2 @@
 # Package init for darwin
-__all__ = ["config", "utils", "genetics", "entities", "simulation", "ui"]
+__all__ = ["config", "utils", "genetics", "entities", "core", "ui", "analytics"]
