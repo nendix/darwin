@@ -20,6 +20,8 @@ class Stats:
     pred_pop: int = 0
     prey_fitness_avg: float = 0.0
     pred_fitness_avg: float = 0.0
+    avg_prey_genome: object = None
+    avg_pred_genome: object = None
 
 
 @dataclass
@@ -99,6 +101,34 @@ class World:
     def pred_fitness(self, p: Predator) -> float:
         return p.kills * 15.0 + p.age * 0.1 + (p.energy / max(1.0, p.dna.stamina)) * 5.0
 
+    def calculate_average_prey_genome(self, prey_genomes):
+        """Calculate the average genome across all prey."""
+        if not prey_genomes:
+            return None
+        
+        n = len(prey_genomes)
+        avg_speed = sum(g.speed for g in prey_genomes) / n
+        avg_vision = sum(g.vision for g in prey_genomes) / n
+        avg_stamina = sum(g.stamina for g in prey_genomes) / n
+        avg_resistance = sum(g.resistance for g in prey_genomes) / n
+        
+        from .genetics import PreyGenome
+        return PreyGenome(avg_speed, avg_vision, avg_stamina, avg_resistance)
+
+    def calculate_average_pred_genome(self, pred_genomes):
+        """Calculate the average genome across all predators."""
+        if not pred_genomes:
+            return None
+        
+        n = len(pred_genomes)
+        avg_speed = sum(g.speed for g in pred_genomes) / n
+        avg_vision = sum(g.vision for g in pred_genomes) / n
+        avg_stamina = sum(g.stamina for g in pred_genomes) / n
+        avg_strength = sum(g.strength for g in pred_genomes) / n
+        
+        from .genetics import PredatorGenome
+        return PredatorGenome(avg_speed, avg_vision, avg_stamina, avg_strength)
+
     def end_generation(self):
         prey_fit = [self.prey_fitness(p) for p in self.preys]
         pred_fit = [self.pred_fitness(p) for p in self.predators]
@@ -121,6 +151,10 @@ class World:
         pred_sorted = [g for g, f in pred_pairs]
         pred_fit_sorted = [f for g, f in pred_pairs]
 
+        # Calculate average genomes for the current generation
+        avg_prey_genome = self.calculate_average_prey_genome(prey_source)
+        avg_pred_genome = self.calculate_average_pred_genome(pred_source)
+
         self.history.append(
             Stats(
                 generation=self.generation,
@@ -128,6 +162,8 @@ class World:
                 pred_pop=len(self.predators),
                 prey_fitness_avg=sum(prey_fit_sorted) / len(prey_fit_sorted),
                 pred_fitness_avg=sum(pred_fit_sorted) / len(pred_fit_sorted),
+                avg_prey_genome=avg_prey_genome,
+                avg_pred_genome=avg_pred_genome,
             )
         )
 
