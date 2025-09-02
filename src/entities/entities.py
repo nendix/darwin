@@ -259,7 +259,7 @@ class Predator(Animal):
             pygame.draw.line(screen, WHITE, (screen_x, screen_y), (end_x, end_y), 2)
     
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
-        """Draw the predator's vision cone"""
+        """Draw the predator's vision cone as simple lines"""
         vision_range = (self.genome.vision / 100.0) * 150
         half_cone_angle = math.radians(PREDATOR_VISION_ANGLE / 2)
         
@@ -267,18 +267,16 @@ class Predator(Animal):
         left_angle = self.direction - half_cone_angle
         right_angle = self.direction + half_cone_angle
         
-        points = [(screen_x, screen_y)]
-        for angle in [left_angle, right_angle]:
-            end_x = screen_x + math.cos(angle) * vision_range
-            end_y = screen_y + math.sin(angle) * vision_range
-            points.append((end_x, end_y))
+        # Draw vision lines
+        left_end_x = screen_x + math.cos(left_angle) * vision_range
+        left_end_y = screen_y + math.sin(left_angle) * vision_range
+        right_end_x = screen_x + math.cos(right_angle) * vision_range
+        right_end_y = screen_y + math.sin(right_angle) * vision_range
         
-        # Draw vision cone with transparency
-        vision_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        vision_surface.set_alpha(50)
-        vision_surface.fill(BLACK)
-        pygame.draw.polygon(vision_surface, RED, points)
-        screen.blit(vision_surface, (0, 0))
+        # Draw the cone outline with simple lines
+        pygame.draw.line(screen, RED, (screen_x, screen_y), (left_end_x, left_end_y), 2)
+        pygame.draw.line(screen, RED, (screen_x, screen_y), (right_end_x, right_end_y), 2)
+        pygame.draw.line(screen, RED, (left_end_x, left_end_y), (right_end_x, right_end_y), 1)
 
 
 class Prey(Animal):
@@ -388,14 +386,10 @@ class Prey(Animal):
         screen_y = int(self.y)
         
         if -50 <= screen_x <= SCREEN_WIDTH + 50 and -50 <= screen_y <= SCREEN_HEIGHT + 50:
-            # Draw vision range if enabled
+            # Draw vision range if enabled (simple circle outline)
             if show_vision:
                 vision_range = (self.genome.vision / 100.0) * 150
-                vision_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-                vision_surface.set_alpha(30)
-                vision_surface.fill(BLACK)
-                pygame.draw.circle(vision_surface, BLUE, (screen_x, screen_y), int(vision_range))
-                screen.blit(vision_surface, (0, 0))
+                pygame.draw.circle(screen, BLUE, (screen_x, screen_y), int(vision_range), 2)
             
             # Draw prey
             color = BLUE if not self.can_reproduce else YELLOW
