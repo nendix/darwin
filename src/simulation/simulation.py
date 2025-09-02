@@ -49,15 +49,15 @@ class Simulation:
         """Initialize predator and prey populations"""
         # Create predators
         for _ in range(self.params['predator_count']):
-            x = random.uniform(50, WORLD_WIDTH - 50)
-            y = random.uniform(50, WORLD_HEIGHT - 50)
+            x = random.uniform(50, SCREEN_WIDTH - 50)
+            y = random.uniform(50, SCREEN_HEIGHT - 50)
             predator = Predator(x, y)
             self.entities.append(predator)
         
         # Create prey
         for _ in range(self.params['prey_count']):
-            x = random.uniform(50, WORLD_WIDTH - 50)
-            y = random.uniform(50, WORLD_HEIGHT - 50)
+            x = random.uniform(50, SCREEN_WIDTH - 50)
+            y = random.uniform(50, SCREEN_HEIGHT - 50)
             prey = Prey(x, y)
             self.entities.append(prey)
         
@@ -70,8 +70,8 @@ class Simulation:
         food_needed = self.params['food_count'] - current_food
         
         for _ in range(food_needed):
-            x = random.uniform(20, WORLD_WIDTH - 20)
-            y = random.uniform(20, WORLD_HEIGHT - 20)
+            x = random.uniform(20, SCREEN_WIDTH - 20)
+            y = random.uniform(20, SCREEN_HEIGHT - 20)
             food = Food(x, y)
             self.entities.append(food)
     
@@ -129,16 +129,16 @@ class Simulation:
     def _emergency_spawn_predators(self):
         """Emergency spawn predators to prevent extinction"""
         for _ in range(2):
-            x = random.uniform(50, WORLD_WIDTH - 50)
-            y = random.uniform(50, WORLD_HEIGHT - 50)
+            x = random.uniform(50, SCREEN_WIDTH - 50)
+            y = random.uniform(50, SCREEN_HEIGHT - 50)
             predator = Predator(x, y)
             self.entities.append(predator)
     
     def _emergency_spawn_prey(self):
         """Emergency spawn prey to prevent extinction"""
         for _ in range(4):
-            x = random.uniform(50, WORLD_WIDTH - 50)
-            y = random.uniform(50, WORLD_HEIGHT - 50)
+            x = random.uniform(50, SCREEN_WIDTH - 50)
+            y = random.uniform(50, SCREEN_HEIGHT - 50)
             prey = Prey(x, y)
             self.entities.append(prey)
     
@@ -283,8 +283,8 @@ class PopulationManager:
             child_y = (parent1.y + parent2.y) / 2 + random.uniform(-30, 30)
             
             # Keep within bounds
-            child_x = max(0, min(WORLD_WIDTH, child_x))
-            child_y = max(0, min(WORLD_HEIGHT, child_y))
+            child_x = max(20, min(SCREEN_WIDTH - 20, child_x))
+            child_y = max(20, min(SCREEN_HEIGHT - 20, child_y))
             
             child = Predator(child_x, child_y, child_genome)
             entities.append(child)
@@ -306,8 +306,8 @@ class PopulationManager:
             child_y = (parent1.y + parent2.y) / 2 + random.uniform(-30, 30)
             
             # Keep within bounds
-            child_x = max(0, min(WORLD_WIDTH, child_x))
-            child_y = max(0, min(WORLD_HEIGHT, child_y))
+            child_x = max(20, min(SCREEN_WIDTH - 20, child_x))
+            child_y = max(20, min(SCREEN_HEIGHT - 20, child_y))
             
             child = Prey(child_x, child_y, child_genome)
             entities.append(child)

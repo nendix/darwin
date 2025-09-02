@@ -52,8 +52,8 @@ class Food(Entity):
     
     def draw(self, screen: pygame.Surface, camera_offset: Tuple[int, int], show_vision: bool = False):
         """Draw food as a small green circle"""
-        screen_x = int(self.x - camera_offset[0])
-        screen_y = int(self.y - camera_offset[1])
+        screen_x = int(self.x)
+        screen_y = int(self.y)
         
         if 0 <= screen_x <= SCREEN_WIDTH and 0 <= screen_y <= SCREEN_HEIGHT:
             pygame.draw.circle(screen, GREEN, (screen_x, screen_y), FOOD_RADIUS)
@@ -81,9 +81,9 @@ class Animal(Entity):
         new_x = self.x + math.cos(self.direction) * distance
         new_y = self.y + math.sin(self.direction) * distance
         
-        # Keep within world bounds
-        self.x = max(0, min(WORLD_WIDTH, new_x))
-        self.y = max(0, min(WORLD_HEIGHT, new_y))
+        # Keep within screen bounds (world = screen)
+        self.x = max(10, min(SCREEN_WIDTH - 10, new_x))
+        self.y = max(10, min(SCREEN_HEIGHT - 10, new_y))
         
         # Consume energy for movement
         self.energy -= MOVEMENT_ENERGY_COST * dt
@@ -241,8 +241,8 @@ class Predator(Animal):
     
     def draw(self, screen: pygame.Surface, camera_offset: Tuple[int, int], show_vision: bool = False):
         """Draw predator as red circle with optional vision cone"""
-        screen_x = int(self.x - camera_offset[0])
-        screen_y = int(self.y - camera_offset[1])
+        screen_x = int(self.x)
+        screen_y = int(self.y)
         
         if -50 <= screen_x <= SCREEN_WIDTH + 50 and -50 <= screen_y <= SCREEN_HEIGHT + 50:
             # Draw vision cone if enabled
@@ -384,8 +384,8 @@ class Prey(Animal):
     
     def draw(self, screen: pygame.Surface, camera_offset: Tuple[int, int], show_vision: bool = False):
         """Draw prey as blue circle with optional vision range"""
-        screen_x = int(self.x - camera_offset[0])
-        screen_y = int(self.y - camera_offset[1])
+        screen_x = int(self.x)
+        screen_y = int(self.y)
         
         if -50 <= screen_x <= SCREEN_WIDTH + 50 and -50 <= screen_y <= SCREEN_HEIGHT + 50:
             # Draw vision range if enabled

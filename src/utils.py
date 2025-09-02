@@ -40,9 +40,9 @@ def lerp(a: float, b: float, t: float) -> float:
 
 def random_position_in_world(margin: float = 50) -> Tuple[float, float]:
     """Generate a random position within world bounds with margin"""
-    from .config import WORLD_WIDTH, WORLD_HEIGHT
-    x = random.uniform(margin, WORLD_WIDTH - margin)
-    y = random.uniform(margin, WORLD_HEIGHT - margin)
+    from .config import SCREEN_WIDTH, SCREEN_HEIGHT
+    x = random.uniform(margin, SCREEN_WIDTH - margin)
+    y = random.uniform(margin, SCREEN_HEIGHT - margin)
     return x, y
 
 
