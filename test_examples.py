@@ -11,7 +11,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from src.genetics.genetic_algorithm import GeneticAlgorithm, PredatorGenome, PreyGenome
-from src.entities.entities import Predator, Prey, Food
+from src.entities import Predator, Prey, Food
 from src.presets import get_preset_configuration, list_available_presets
 from src.utils import calculate_genome_diversity, format_time
 from src.config import *

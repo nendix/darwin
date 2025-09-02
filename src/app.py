@@ -4,7 +4,7 @@ Darwin - Main Application Class
 
 import pygame
 import sys
-from .ui.screens import ScreenManager, MenuScreen
+from .ui import ScreenManager, MenuScreen
 from .config import *
 
 

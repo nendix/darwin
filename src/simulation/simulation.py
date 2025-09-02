@@ -6,7 +6,7 @@ import random
 import time
 from typing import List, Dict, Any, Tuple
 
-from ..entities.entities import Predator, Prey, Food, Entity
+from ..entities import Predator, Prey, Food, Entity
 from ..genetics.genetic_algorithm import GeneticAlgorithm
 from ..config import *
 
