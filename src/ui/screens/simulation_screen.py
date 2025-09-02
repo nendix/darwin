@@ -124,11 +124,16 @@ def show_simulation_screen(screen, clock, params):
     # Create all charts
     create_population_chart(world)
     create_fitness_chart(world)
-    
+
     # Import and create the new genome analysis charts
-    from ...analytics.charts import create_best_prey_genome_chart, create_best_predator_genome_chart, create_genome_comparison_chart
+    from ...analytics.charts import (
+        create_best_prey_genome_chart,
+        create_best_predator_genome_chart,
+        create_genome_comparison_chart,
+    )
+
     create_best_prey_genome_chart(world)
     create_best_predator_genome_chart(world)
     create_genome_comparison_chart(world)
-    
+
     return params

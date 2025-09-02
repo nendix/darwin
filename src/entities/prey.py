@@ -5,7 +5,7 @@ Prey agent implementation for Darwin simulation.
 from dataclasses import dataclass, field
 import random
 from typing import List, TYPE_CHECKING
-from ..utils.math_utils import clamp, dist, normalize
+from ..utils.math_utils import dist, normalize
 from ..utils.position_utils import clamp_to_bounds, check_collision, resolve_collision
 from ..genetics.dna import PreyGenome
 from .base import BaseAgent
@@ -18,9 +18,18 @@ if TYPE_CHECKING:
 @dataclass
 class Prey(BaseAgent):
     """Prey agent that seeks food and avoids predators."""
+
     dna: PreyGenome = field(default_factory=lambda: PreyGenome(1, 1, 1, 0))
 
-    def step(self, w: int, h: int, foods: List[Food], predators: List['Predator'], all_prey: List['Prey'], params):
+    def step(
+        self,
+        w: int,
+        h: int,
+        foods: List[Food],
+        predators: List["Predator"],
+        all_prey: List["Prey"],
+        params,
+    ):
         """Execute one simulation step for this prey."""
         if not self.tick_energy(params.prey_hunger_rate):
             return
@@ -28,11 +37,13 @@ class Prey(BaseAgent):
         # Convert genome values (1-100) to usable ranges
         actual_speed = self.dna.speed / 100.0 * 3.0 + 0.5  # 0.5-3.5 range
         actual_vision = self.dna.vision / 100.0 * 200.0 + 50.0  # 50-250 range
-        max_energy = self.dna.stamina / 100.0 * 200.0 + 50.0  # 50-250 range (stamina = max energy capacity)
-        
+        max_energy = (
+            self.dna.stamina / 100.0 * 200.0 + 50.0
+        )  # 50-250 range (stamina = max energy capacity)
+
         # Store max energy for gain_energy method
         self._max_energy = max_energy
-        
+
         # Update reproduction score (for fitness tracking only)
         # Note: age is automatically incremented in tick_energy()
         self.calculate_reproduction_score()
@@ -54,7 +65,7 @@ class Prey(BaseAgent):
         # Movement logic: flee predators > seek food > random movement
         ax, ay = 0.0, 0.0
         has_direction = False
-        
+
         if nearest_pred:
             # PRIORITY 1: Flee from predator if in vision
             dx = self.x - nearest_pred.x
@@ -71,7 +82,7 @@ class Prey(BaseAgent):
                 if d < dminf:
                     dminf = d
                     nearest_food = f
-                    
+
             if nearest_food:
                 # Move directly toward food
                 dx = nearest_food.pos[0] - self.x
@@ -79,11 +90,12 @@ class Prey(BaseAgent):
                 nx, ny = normalize(dx, dy)
                 ax, ay = nx, ny
                 has_direction = True
-        
+
         # PRIORITY 3: Random movement if no food/predator in vision
         if not has_direction:
             # Random direction for exploration
             import math
+
             angle = random.uniform(0, 2 * math.pi)
             ax = math.cos(angle)
             ay = math.sin(angle)
@@ -93,29 +105,33 @@ class Prey(BaseAgent):
         nx, ny = normalize(ax, ay)
         move_cost = params.stamina_drain_move * (0.5 + 0.5 * (actual_speed / 3.5))
         self.consume_for_move(move_cost)
-        
+
         # Apply genome-scaled constant speed movement (always same speed)
         if self.alive:
             self.vx = nx * actual_speed  # Constant speed in direction
             self.vy = ny * actual_speed  # Constant speed in direction
-        
+
         # Apply movement if alive
         if self.alive:
             # Move with constant speed (no velocity accumulation)
             self.x += self.vx
             self.y += self.vy
-            
+
             # Clamp to world bounds (no wrapping)
             self.x, self.y = clamp_to_bounds(self.x, self.y, w, h, radius=5.0)
-            
+
             # Check and resolve collisions with other prey
             for other_prey in all_prey:
                 if other_prey != self and other_prey.alive:
                     if check_collision(self.pos(), other_prey.pos(), min_distance=10.0):
-                        self.x, self.y = resolve_collision(self.pos(), other_prey.pos(), min_distance=10.0)
+                        self.x, self.y = resolve_collision(
+                            self.pos(), other_prey.pos(), min_distance=10.0
+                        )
                         # Clamp again after collision resolution
-                        self.x, self.y = clamp_to_bounds(self.x, self.y, w, h, radius=5.0)
-            
+                        self.x, self.y = clamp_to_bounds(
+                            self.x, self.y, w, h, radius=5.0
+                        )
+
             # Note: No collision resolution with predators - collision means attack/death
 
         # eat food if close (only if alive)
@@ -128,4 +144,6 @@ class Prey(BaseAgent):
             if eaten is not None:
                 foods.pop(eaten)
                 self.food_eaten += 1
-                self.gain_energy(params.prey_food_energy)  # Use stamina-based max energy
+                self.gain_energy(
+                    params.prey_food_energy
+                )  # Use stamina-based max energy

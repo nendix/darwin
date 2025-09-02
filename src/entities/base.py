@@ -10,6 +10,7 @@ from ..utils.math_utils import clamp
 @dataclass
 class BaseAgent:
     """Base class for all simulation agents."""
+
     x: float = 0.0
     y: float = 0.0
     vx: float = 0.0
@@ -17,7 +18,7 @@ class BaseAgent:
     energy: float = 100.0
     alive: bool = True
     age: int = 0
-    
+
     # Reproduction-related fields
     food_eaten: int = 0
     kills: int = 0
@@ -49,7 +50,7 @@ class BaseAgent:
         """Gain energy up to maximum stamina from genome."""
         # Max energy is determined by the agent's stamina genome
         # This method should be overridden by subclasses to access their specific genome
-        max_energy = getattr(self, '_max_energy', 100.0)  # Fallback
+        max_energy = getattr(self, "_max_energy", 100.0)  # Fallback
         self.energy = clamp(self.energy + amount, 0.0, max_energy)
 
     def calculate_reproduction_score(self) -> float:
@@ -58,19 +59,21 @@ class BaseAgent:
         Score = food_eaten * 20 + energy_ratio * 30 + age * 0.1 + kills * 25
         """
         # Energy ratio based on current energy vs max stamina
-        max_energy = getattr(self, '_max_energy', 100.0)
+        max_energy = getattr(self, "_max_energy", 100.0)
         energy_ratio = self.energy / max(1.0, max_energy)
         survival_factor = self.age * 0.1
         food_factor = self.food_eaten * 20
         kill_factor = self.kills * 25
-        
-        self.reproduction_score = food_factor + energy_ratio * 30 + survival_factor + kill_factor
+
+        self.reproduction_score = (
+            food_factor + energy_ratio * 30 + survival_factor + kill_factor
+        )
         return self.reproduction_score
 
     def can_reproduce(self) -> bool:
         """Check if agent can reproduce (score >= 100 and hasn't reproduced yet)."""
         if self.has_reproduced or not self.alive:
             return False
-        
+
         self.calculate_reproduction_score()
         return self.reproduction_score >= 100.0

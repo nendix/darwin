@@ -5,7 +5,7 @@ Random number generation utilities for Darwin simulation.
 import random
 from typing import List, TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def random_choice(items: List[T]) -> T:

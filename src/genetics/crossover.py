@@ -15,7 +15,7 @@ def crossover_prey(p1: PreyGenome, p2: PreyGenome, rate: float) -> PreyGenome:
     """Perform crossover between two prey genomes."""
     if random.random() > rate:
         return random.choice([p1, p2])
-    
+
     t = random.random()
     return PreyGenome(
         speed=blend(p1.speed, p2.speed, t),
@@ -29,7 +29,7 @@ def crossover_pred(a: PredatorGenome, b: PredatorGenome, rate: float) -> Predato
     """Perform crossover between two predator genomes."""
     if random.random() > rate:
         return random.choice([a, b])
-    
+
     t = random.random()
     return PredatorGenome(
         speed=blend(a.speed, b.speed, t),
