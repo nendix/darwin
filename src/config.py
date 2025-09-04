@@ -3,10 +3,8 @@ Darwin - Configuration and Constants
 """
 
 # Screen dimensions
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
-WORLD_WIDTH = 1200  # Same as screen width
-WORLD_HEIGHT = 800  # Same as screen height
+SCREEN_WIDTH = 1500
+SCREEN_HEIGHT = 900
 
 # Colors
 BLACK = (15, 15, 20)
