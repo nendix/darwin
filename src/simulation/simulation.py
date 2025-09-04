@@ -7,7 +7,8 @@ import time
 from typing import List, Dict, Any, Tuple
 
 from ..entities import Predator, Prey, Food, Entity
-from ..genetics.genetic_algorithm import GeneticAlgorithm
+from ..genetics.genomes import GenomeFactory
+from ..genetics.operations import GeneticOperations
 from ..config import *
 
 
@@ -278,7 +279,7 @@ class PopulationManager:
         """Handle reproduction between two entities"""
         if isinstance(parent1, Predator) and isinstance(parent2, Predator):
             # Create predator offspring
-            child_genome = GeneticAlgorithm.crossover_predator(parent1.genome, parent2.genome)
+            child_genome = GeneticOperations.crossover_predator(parent1.genome, parent2.genome)
             child_x = (parent1.x + parent2.x) / 2 + random.uniform(-30, 30)
             child_y = (parent1.y + parent2.y) / 2 + random.uniform(-30, 30)
             
@@ -301,7 +302,7 @@ class PopulationManager:
             
         elif isinstance(parent1, Prey) and isinstance(parent2, Prey):
             # Create prey offspring
-            child_genome = GeneticAlgorithm.crossover_prey(parent1.genome, parent2.genome)
+            child_genome = GeneticOperations.crossover_prey(parent1.genome, parent2.genome)
             child_x = (parent1.x + parent2.x) / 2 + random.uniform(-30, 30)
             child_y = (parent1.y + parent2.y) / 2 + random.uniform(-30, 30)
             

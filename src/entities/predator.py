@@ -8,7 +8,9 @@ import pygame
 from typing import List, Tuple, Optional
 
 from .base_entity import Entity
-from ..genetics.genetic_algorithm import PredatorGenome, GeneticAlgorithm
+from ..genetics.genomes import PredatorGenome
+from ..genetics.genomes import GenomeFactory
+from ..genetics.operations import GeneticOperations
 from ..config import *
 
 
@@ -18,7 +20,7 @@ class Predator(Entity):
     def __init__(self, x: float, y: float, genome: Optional[PredatorGenome] = None):
         super().__init__(x, y)
         if genome is None:
-            genome = GeneticAlgorithm.create_random_predator_genome()
+            genome = GenomeFactory.create_random_predator_genome()
         self.genome = genome
         self.energy = genome.stamina
         self.max_energy = genome.stamina
@@ -180,7 +182,7 @@ class Predator(Entity):
     def _reproduce(self, mate, entities: List[Entity]):
         """Reproduce with another predator"""
         # Create offspring
-        child_genome = GeneticAlgorithm.crossover_predator(self.genome, mate.genome)
+        child_genome = GeneticOperations.crossover_predator(self.genome, mate.genome)
         child_x = (self.x + mate.x) / 2 + random.uniform(-20, 20)
         child_y = (self.y + mate.y) / 2 + random.uniform(-20, 20)
         child = Predator(child_x, child_y, child_genome)

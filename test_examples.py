@@ -10,10 +10,20 @@ import os
 # Add the src directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from src.genetics.genetic_algorithm import GeneticAlgorithm, PredatorGenome, PreyGenome
+from src.genetics.genomes import PredatorGenome, PreyGenome, GenomeFactory
+from src.genetics.operations import GeneticOperations
 from src.entities import Predator, Prey, Food
 from src.presets import get_preset_configuration, list_available_presets
-from src.utils import calculate_genome_diversity, format_time
+from src.utils import calculate_genome_diversity
+
+def format_time(seconds):
+    """Simple time formatting function"""
+    if seconds < 60:
+        return f"{seconds}s"
+    elif seconds < 3600:
+        return f"{seconds // 60}m {seconds % 60}s"
+    else:
+        return f"{seconds // 3600}h {(seconds % 3600) // 60}m {seconds % 60}s"
 from src.config import *
 
 
@@ -23,8 +33,8 @@ def test_genetic_algorithms():
     print("=" * 50)
     
     # Create random genomes
-    predator_genome1 = GeneticAlgorithm.create_random_predator_genome()
-    predator_genome2 = GeneticAlgorithm.create_random_predator_genome()
+    predator_genome1 = GenomeFactory.create_random_predator_genome()
+    predator_genome2 = GenomeFactory.create_random_predator_genome()
     
     print(f"Predator 1: Speed={predator_genome1.speed:.1f}, Vision={predator_genome1.vision:.1f}, "
           f"Stamina={predator_genome1.stamina:.1f}, Attack={predator_genome1.attack_strength:.1f}")
@@ -32,20 +42,20 @@ def test_genetic_algorithms():
           f"Stamina={predator_genome2.stamina:.1f}, Attack={predator_genome2.attack_strength:.1f}")
     
     # Test crossover
-    offspring = GeneticAlgorithm.crossover_predator(predator_genome1, predator_genome2)
+    offspring = GeneticOperations.crossover_predator(predator_genome1, predator_genome2)
     print(f"Offspring:  Speed={offspring.speed:.1f}, Vision={offspring.vision:.1f}, "
           f"Stamina={offspring.stamina:.1f}, Attack={offspring.attack_strength:.1f}")
     
     # Test prey genetics
-    prey_genome1 = GeneticAlgorithm.create_random_prey_genome()
-    prey_genome2 = GeneticAlgorithm.create_random_prey_genome()
+    prey_genome1 = GenomeFactory.create_random_prey_genome()
+    prey_genome2 = GenomeFactory.create_random_prey_genome()
     
     print(f"\nPrey 1: Speed={prey_genome1.speed:.1f}, Vision={prey_genome1.vision:.1f}, "
           f"Stamina={prey_genome1.stamina:.1f}, Resistance={prey_genome1.attack_resistance:.1f}")
     print(f"Prey 2: Speed={prey_genome2.speed:.1f}, Vision={prey_genome2.vision:.1f}, "
           f"Stamina={prey_genome2.stamina:.1f}, Resistance={prey_genome2.attack_resistance:.1f}")
     
-    prey_offspring = GeneticAlgorithm.crossover_prey(prey_genome1, prey_genome2)
+    prey_offspring = GeneticOperations.crossover_prey(prey_genome1, prey_genome2)
     print(f"Offspring: Speed={prey_offspring.speed:.1f}, Vision={prey_offspring.vision:.1f}, "
           f"Stamina={prey_offspring.stamina:.1f}, Resistance={prey_offspring.attack_resistance:.1f}")
     
@@ -104,7 +114,7 @@ def test_genome_diversity():
     print("=" * 50)
     
     # Create a population of genomes
-    predator_genomes = [GeneticAlgorithm.create_random_predator_genome() for _ in range(10)]
+    predator_genomes = [GenomeFactory.create_random_predator_genome() for _ in range(10)]
     
     # Calculate diversity
     diversity = calculate_genome_diversity(predator_genomes)

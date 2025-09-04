@@ -8,7 +8,9 @@ import pygame
 from typing import List, Tuple, Optional
 
 from .base_entity import Entity
-from ..genetics.genetic_algorithm import PreyGenome, GeneticAlgorithm
+from ..genetics.genomes import PreyGenome
+from ..genetics.genomes import GenomeFactory
+from ..genetics.operations import GeneticOperations
 from ..config import *
 
 
@@ -18,7 +20,7 @@ class Prey(Entity):
     def __init__(self, x: float, y: float, genome: Optional[PreyGenome] = None):
         super().__init__(x, y)
         if genome is None:
-            genome = GeneticAlgorithm.create_random_prey_genome()
+            genome = GenomeFactory.create_random_prey_genome()
         self.genome = genome
         self.energy = genome.stamina
         self.max_energy = genome.stamina
@@ -173,10 +175,8 @@ class Prey(Entity):
     def _reproduce(self, mate, entities: List[Entity]):
         """Reproduce with another prey"""
         # Create offspring
-        child_genome = GeneticAlgorithm.crossover_prey(self.genome, mate.genome)
-        child_x = (self.x + mate.x) / 2 + random.uniform(-20, 20)
-        child_y = (self.y + mate.y) / 2 + random.uniform(-20, 20)
-        child = Prey(child_x, child_y, child_genome)
+        child_genome = GeneticOperations.crossover_prey(self.genome, mate.genome)
+        child = Prey(self.x, self.y, child_genome)
         entities.append(child)
 
         # Reset reproduction status

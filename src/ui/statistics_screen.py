@@ -102,21 +102,12 @@ class StatisticsScreen:
             y_offset += 35
 
             reproductions = evolution.get("total_reproductions", 0)
-            mutations = evolution.get("total_mutations", 0)
 
             draw_text(
                 screen,
                 f"Riproduzioni: {reproductions}",
                 70,
                 y_offset,
-                WHITE,
-                FONT_SIZE_MEDIUM,
-            )
-            draw_text(
-                screen,
-                f"Mutazioni: {mutations}",
-                70,
-                y_offset + 25,
                 WHITE,
                 FONT_SIZE_MEDIUM,
             )
