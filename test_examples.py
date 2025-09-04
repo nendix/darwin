@@ -13,7 +13,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 from src.genetics.genomes import PredatorGenome, PreyGenome, GenomeFactory
 from src.genetics.operations import GeneticOperations
 from src.entities import Predator, Prey, Food
-from src.presets import get_preset_configuration, list_available_presets
 from src.utils import calculate_genome_diversity
 
 def format_time(seconds):
@@ -85,27 +84,6 @@ def test_entity_creation():
     print(f"Can predator see prey? {can_see}")
     
     print("\n✅ Entity creation working correctly!\n")
-
-
-def test_presets():
-    """Test configuration presets"""
-    print("⚙️ Testing Configuration Presets...")
-    print("=" * 50)
-    
-    # List available presets
-    presets = list_available_presets()
-    print("Available presets:")
-    for category, preset_list in presets.items():
-        print(f"  {category.capitalize()}: {', '.join(preset_list)}")
-    
-    # Test specific preset
-    balanced_config = get_preset_configuration('balanced', 'simulation')
-    if balanced_config:
-        print(f"\nBalanced simulation preset:")
-        for key, value in balanced_config.items():
-            print(f"  {key}: {value}")
-    
-    print("\n✅ Presets working correctly!\n")
 
 
 def test_genome_diversity():
@@ -235,7 +213,6 @@ def main():
     try:
         test_genetic_algorithms()
         test_entity_creation()
-        test_presets()
         test_genome_diversity()
         test_utilities()
         demonstrate_simulation_concepts()
