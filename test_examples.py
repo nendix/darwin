@@ -66,9 +66,13 @@ def test_entity_creation():
     print("🎮 Testing Entity Creation...")
     print("=" * 50)
     
+    # Create genomes first
+    predator_genome = GenomeFactory.create_random_predator_genome()
+    prey_genome = GenomeFactory.create_random_prey_genome()
+    
     # Create entities
-    predator = Predator(100, 100)
-    prey = Prey(200, 200)
+    predator = Predator(100, 100, predator_genome)
+    prey = Prey(200, 200, prey_genome)
     food = Food(150, 150)
     
     print(f"Predator created at ({predator.x}, {predator.y})")
@@ -162,7 +166,8 @@ def run_mini_simulation():
     for i in range(3):
         x = 100 + i * 50
         y = 100
-        predator = Predator(x, y)
+        genome = GenomeFactory.create_random_predator_genome()
+        predator = Predator(x, y, genome)
         entities.append(predator)
         print(f"Predator {i+1}: Speed={predator.genome.speed:.1f}, Attack={predator.genome.attack_strength:.1f}")
     
@@ -170,7 +175,8 @@ def run_mini_simulation():
     for i in range(5):
         x = 200 + i * 30
         y = 200
-        prey = Prey(x, y)
+        genome = GenomeFactory.create_random_prey_genome()
+        prey = Prey(x, y, genome)
         entities.append(prey)
         print(f"Prey {i+1}: Speed={prey.genome.speed:.1f}, Resistance={prey.genome.attack_resistance:.1f}")
     
