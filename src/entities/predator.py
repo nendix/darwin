@@ -175,7 +175,7 @@ class Predator(Entity):
 
         if isinstance(prey, Prey):
             prey.take_damage(self.genome.attack_strength)
-            self.reproduction_score += 20  # Gain score for successful attack
+            self.reproduction_score += PREDATOR_EATING_GAIN
 
     def _reproduce(self, mate, entities: List[Entity]):
         """Reproduce with another predator"""
