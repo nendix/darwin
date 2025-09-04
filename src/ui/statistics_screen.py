@@ -3,19 +3,19 @@ Darwin - Statistics Screen
 """
 
 import pygame
-from .base_screen import Screen
-from .components import HUD
 from ..analysis import StatisticsAnalyzer
 from ..config import *
 
 
-class StatisticsScreen(Screen):
+class StatisticsScreen:
     """Statistics screen showing simulation results"""
     
-    def __init__(self, screen_manager, statistics):
-        super().__init__(screen_manager)
+    def __init__(self, app, statistics):
+        self.app = app
+        self.font_large = pygame.font.Font(None, FONT_SIZE_LARGE)
+        self.font_medium = pygame.font.Font(None, FONT_SIZE_MEDIUM)
+        self.font_small = pygame.font.Font(None, FONT_SIZE_SMALL)
         self.statistics = statistics
-        self.hud = HUD()
         
         # Simple menu options
         self.menu_options = [
@@ -28,11 +28,11 @@ class StatisticsScreen(Screen):
     
     def new_simulation(self):
         """Start a new simulation with same parameters"""
-        self.screen_manager.restart_simulation()
+        self.app.restart_simulation()
     
     def back_to_menu(self):
         """Return to main menu"""
-        self.screen_manager.set_screen('menu')
+        self.app.show_menu()
     
     def save_report(self):
         """Save comprehensive simulation report"""
@@ -68,7 +68,7 @@ class StatisticsScreen(Screen):
         screen.blit(title, title_rect)
         
         # Draw statistics summary
-        y_offset = self.hud.draw_statistics_summary(screen, self.statistics, 100)
+        y_offset = self._draw_statistics_summary(screen, self.statistics, 100)
         
         # Draw final populations
         if 'final_populations' in self.statistics:
@@ -124,3 +124,32 @@ class StatisticsScreen(Screen):
             text = self.font_small.render(instruction, True, GREY)
             screen.blit(text, (50, y_offset))
             y_offset += 25
+    
+    def _draw_statistics_summary(self, screen: pygame.Surface, stats: dict, y_start: int = 50):
+        """Draw statistics summary"""
+        y_offset = y_start
+        
+        # Generation info
+        generation = stats.get('generation', 1)
+        gen_text = self.font_large.render(f"Generazione: {generation}", True, WHITE)
+        screen.blit(gen_text, (50, y_offset))
+        y_offset += 40
+        
+        # Survival stats
+        if 'survival_stats' in stats:
+            survival = stats['survival_stats']
+            survival_text = self.font_medium.render("Statistiche di Sopravvivenza:", True, WHITE)
+            screen.blit(survival_text, (50, y_offset))
+            y_offset += 30
+            
+            predator_survival = survival.get('predator_survival_rate', 0)
+            prey_survival = survival.get('prey_survival_rate', 0)
+            
+            pred_text = self.font_small.render(f"Sopravvivenza Predatori: {predator_survival:.1f}%", True, RED)
+            prey_text = self.font_small.render(f"Sopravvivenza Prede: {prey_survival:.1f}%", True, BLUE)
+            
+            screen.blit(pred_text, (70, y_offset))
+            screen.blit(prey_text, (70, y_offset + 25))
+            y_offset += 60
+        
+        return y_offset

@@ -4,7 +4,9 @@ Darwin - Main Application Class
 
 import pygame
 import sys
-from .ui import ScreenManager, MenuScreen
+from typing import Dict, Any
+from .ui import MenuScreen, SimulationScreen, StatisticsScreen
+from .simulation.simulation import Simulation
 from .config import *
 
 
@@ -24,16 +26,35 @@ class DarwinApp:
         self.clock = pygame.time.Clock()
         self.running = True
         
-        # Initialize screen manager
-        self.screen_manager = ScreenManager()
+        # Screen management
+        self.current_screen = None
+        self.simulation_params = None
         
-        # Create and add screens
-        menu_screen = MenuScreen(self.screen_manager)
-        self.screen_manager.add_screen('menu', menu_screen)
-        self.screen_manager.set_screen('menu')
+        # Create menu screen
+        self.menu_screen = MenuScreen(self)
+        self.current_screen = self.menu_screen
         
         # Initialize fonts
         pygame.font.init()
+    
+    def start_simulation(self, params: Dict[str, Any]):
+        """Start simulation with given parameters"""
+        self.simulation_params = params
+        simulation = Simulation(params)
+        self.current_screen = SimulationScreen(self, simulation)
+    
+    def show_statistics(self, statistics: Dict[str, Any]):
+        """Show statistics screen"""
+        self.current_screen = StatisticsScreen(self, statistics)
+    
+    def restart_simulation(self):
+        """Restart simulation with same parameters"""
+        if self.simulation_params:
+            self.start_simulation(self.simulation_params)
+    
+    def show_menu(self):
+        """Return to main menu"""
+        self.current_screen = self.menu_screen
     
     def run(self):
         """Main application loop"""
@@ -45,7 +66,8 @@ class DarwinApp:
             self._handle_events()
             
             # Update current screen
-            self.screen_manager.update(dt)
+            if self.current_screen:
+                self.current_screen.update(dt)
             
             # Draw everything
             self._draw()
@@ -60,12 +82,14 @@ class DarwinApp:
                 self.running = False
                 break
             
-            # Pass events to screen manager
-            self.screen_manager.handle_event(event)
+            # Pass events to current screen
+            if self.current_screen:
+                self.current_screen.handle_event(event)
     
     def _draw(self):
         """Draw the current screen"""
-        self.screen_manager.draw(self.screen)
+        if self.current_screen:
+            self.current_screen.draw(self.screen)
     
     def quit(self):
         """Quit the application"""

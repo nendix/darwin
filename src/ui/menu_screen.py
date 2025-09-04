@@ -4,15 +4,17 @@ Darwin - Menu Screen
 
 import pygame
 import sys
-from .base_screen import Screen
 from ..config import *
 
 
-class MenuScreen(Screen):
+class MenuScreen:
     """Main menu screen with simulation parameters"""
     
-    def __init__(self, screen_manager):
-        super().__init__(screen_manager)
+    def __init__(self, app):
+        self.app = app
+        self.font_large = pygame.font.Font(None, FONT_SIZE_LARGE)
+        self.font_medium = pygame.font.Font(None, FONT_SIZE_MEDIUM)
+        self.font_small = pygame.font.Font(None, FONT_SIZE_SMALL)
         self.setup_ui()
         
     def setup_ui(self):
@@ -39,7 +41,7 @@ class MenuScreen(Screen):
             'speed': self.parameters[4]['value'],
             'show_vision': self.parameters[5]['value']
         }
-        self.screen_manager.start_simulation(params)
+        self.app.start_simulation(params)
     
     def quit_game(self):
         """Quit the application"""
