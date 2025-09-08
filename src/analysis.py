@@ -11,9 +11,7 @@ class Plotter:
     """Statistics analyzer for generating simulation reports"""
 
     @staticmethod
-    def generate_comprehensive_report(
-        statistics: Dict[str, Any], output_dir: str = "reports"
-    ) -> str:
+    def generate_report(statistics: Dict[str, Any], output_dir: str = "reports") -> str:
         """Generate simulation reports with three matplotlib graphs"""
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)

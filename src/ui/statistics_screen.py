@@ -1,5 +1,5 @@
 import pygame
-from ..analysis import StatisticsAnalyzer
+from ..analysis import Plotter
 from ..config import *
 from .ui_utils import draw_text, text_width
 
@@ -22,9 +22,7 @@ class StatisticsScreen:
     def save_report(self):
         """Save comprehensive simulation report"""
         try:
-            reports_dir = StatisticsAnalyzer.generate_comprehensive_report(
-                self.statistics
-            )
+            reports_dir = Plotter.generate_report(self.statistics)
             print(f"Grafici salvati nella cartella: {reports_dir}")
         except Exception as e:
             print(f"Errore nel salvare i grafici: {e}")
