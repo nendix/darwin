@@ -22,12 +22,12 @@ class StatisticsScreen:
     def save_report(self):
         """Save comprehensive simulation report"""
         try:
-            report_path = StatisticsAnalyzer.generate_comprehensive_report(
+            reports_dir = StatisticsAnalyzer.generate_comprehensive_report(
                 self.statistics
             )
-            print(f"Report salvato in: {report_path}")
+            print(f"Grafici salvati nella cartella: {reports_dir}")
         except Exception as e:
-            print(f"Errore nel salvare il report: {e}")
+            print(f"Errore nel salvare i grafici: {e}")
 
     def handle_event(self, event: pygame.event.Event):
         """Handle statistics screen events"""
@@ -119,7 +119,7 @@ class StatisticsScreen:
         instructions = [
             "Q - Chiudere applicazione",
             "M - Menu principale",
-            "S - Salvare report",
+            "S - Salvare grafici",
             "R - Riavvia simulazione",
         ]
 
