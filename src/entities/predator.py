@@ -28,7 +28,7 @@ class Predator(Entity):
         # First check distance
         if not super().can_see(target):
             return False
-            
+
         # Then check if in vision cone
         return self._is_in_vision_cone(target)
 
@@ -64,6 +64,9 @@ class Predator(Entity):
             self._hunt_behavior(entities, dt)
 
         self.move(dt)
+
+        # Check for collisions with same species and resolve
+        self.check_collision(entities)
 
     def _hunt_behavior(self, entities: List[Entity], dt: float):
         """Hunting behavior - find and chase prey"""
@@ -142,13 +145,8 @@ class Predator(Entity):
                 self._draw_vision_cone(screen, screen_x, screen_y)
 
             # Draw predator
-            color = RED if not self.can_reproduce else YELLOW
+            color = RED if not self.can_reproduce else ORANGE
             pygame.draw.circle(screen, color, (screen_x, screen_y), PREDATOR_RADIUS)
-
-            # Draw direction indicator
-            end_x = screen_x + math.cos(self.direction) * PREDATOR_RADIUS
-            end_y = screen_y + math.sin(self.direction) * PREDATOR_RADIUS
-            pygame.draw.line(screen, WHITE, (screen_x, screen_y), (end_x, end_y), 2)
 
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
         """Draw the predator's vision cone as simple lines"""

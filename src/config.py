@@ -14,6 +14,7 @@ GREEN = (70, 200, 120)
 WHITE = (240, 240, 240)
 GREY = (120, 120, 120)
 YELLOW = (255, 200, 80)
+ORANGE = (255, 150, 50)
 
 # Entity sizes
 PREDATOR_RADIUS = 6
@@ -62,3 +63,4 @@ FONT_NAME = None  # Use default pygame font
 FONT_SIZE_SMALL = 16
 FONT_SIZE_MEDIUM = 24
 FONT_SIZE_LARGE = 32
+

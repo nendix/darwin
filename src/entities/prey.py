@@ -15,7 +15,7 @@ from ..genetics.genomes import PreyGenome, GenomeFactory
 
 class Prey(Entity):
     """Prey entity that avoids predators and seeks food"""
-    
+
     def __init__(self, x: float, y: float, genome: Optional[PreyGenome] = None):
         if genome is None:
             genome = GenomeFactory.create_random_prey_genome()
@@ -45,6 +45,9 @@ class Prey(Entity):
             self._survival_behavior(entities, dt)
 
         self.move(dt)
+
+        # Check for collisions with same species and resolve
+        self.check_collision(entities)
 
     def _survival_behavior(self, entities: List[Entity], dt: float):
         """Survival behavior - avoid predators and seek food"""
