@@ -11,7 +11,7 @@ class StatisticsScreen:
         self.app = app
         self.statistics = statistics
 
-    def new_simulation(self):
+    def restart_simulation(self):
         """Start a new simulation with same parameters"""
         self.app.restart_simulation()
 
@@ -44,6 +44,9 @@ class StatisticsScreen:
             elif event.key == pygame.K_s:
                 # S: Salvare i reports
                 self.save_report()
+            elif event.key == pygame.K_r:
+                # R: Riavvia simulazione
+                self.restart_simulation()
 
     def update(self, dt: float):
         pass
@@ -117,6 +120,7 @@ class StatisticsScreen:
             "Q - Chiudere applicazione",
             "M - Menu principale",
             "S - Salvare report",
+            "R - Riavvia simulazione",
         ]
 
         y_offset = SCREEN_HEIGHT - 100
