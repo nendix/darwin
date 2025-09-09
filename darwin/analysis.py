@@ -16,6 +16,11 @@ class Plotter:
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
+        # Generate all graphs (overwrites existing files)
+        Plotter._create_population_graph(statistics, output_dir)
+        Plotter._create_predator_genome_graph(statistics, output_dir)
+        Plotter._create_prey_genome_graph(statistics, output_dir)
+
         # Return the output directory path
         return output_dir
 
@@ -80,7 +85,7 @@ class Plotter:
                 color="white",
             )
 
-        graph_path = os.path.join(output_dir, "population_graph.png")
+        graph_path = os.path.join(output_dir, "population.png")
         plt.savefig(graph_path, dpi=150, bbox_inches="tight", facecolor="#1a1a1a")
         plt.close()
 
@@ -149,7 +154,7 @@ class Plotter:
                 color="white",
             )
 
-        graph_path = os.path.join(output_dir, "predator_genome.png")
+        graph_path = os.path.join(output_dir, "predator.png")
         plt.savefig(graph_path, dpi=150, bbox_inches="tight", facecolor="#1a1a1a")
         plt.close()
 
@@ -216,7 +221,7 @@ class Plotter:
                 color="white",
             )
 
-        graph_path = os.path.join(output_dir, "prey_genome.png")
+        graph_path = os.path.join(output_dir, "prey.png")
         plt.savefig(graph_path, dpi=150, bbox_inches="tight", facecolor="#1a1a1a")
         plt.close()
 
