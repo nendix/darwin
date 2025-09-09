@@ -117,32 +117,6 @@ class Simulation:
         if int(self.time_remaining) % 5 == 0:  # Every 5 seconds
             self._record_population_data()
 
-        # Check for population crashes and recovery
-        predator_count = len([e for e in self.entities if isinstance(e, Predator)])
-        prey_count = len([e for e in self.entities if isinstance(e, Prey)])
-
-        # Emergency population recovery
-        if predator_count < 2:
-            self._emergency_spawn_predators()
-        if prey_count < 4:
-            self._emergency_spawn_prey()
-
-    def _emergency_spawn_predators(self):
-        """Emergency spawn predators to prevent extinction"""
-        for _ in range(2):
-            x = random.uniform(50, c.SCREEN_WIDTH - 50)
-            y = random.uniform(50, c.SCREEN_HEIGHT - 50)
-            predator = Predator(x, y)
-            self.entities.append(predator)
-
-    def _emergency_spawn_prey(self):
-        """Emergency spawn prey to prevent extinction"""
-        for _ in range(4):
-            x = random.uniform(50, c.SCREEN_WIDTH - 50)
-            y = random.uniform(50, c.SCREEN_HEIGHT - 50)
-            prey = Prey(x, y)
-            self.entities.append(prey)
-
     def increase_speed(self):
         """Increase simulation speed"""
         self.speed = min(c.MAX_SIMULATION_SPEED, self.speed + 1)

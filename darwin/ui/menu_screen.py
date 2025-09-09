@@ -61,9 +61,7 @@ class MenuScreen:
         else:
             # Adjust numeric value
             step = 1
-            if param["name"] == "Cibo":
-                step = 5  # Larger steps for food count
-            elif param["name"] == "Durata (secondi)":
+            if param["name"] == "Durata (secondi)":
                 step = 10  # 10 second steps for duration
 
             new_value = param["value"] + (direction * step)
@@ -110,7 +108,7 @@ class MenuScreen:
                 self.selected_index = min(
                     len(self.parameters) - 1, self.selected_index + 1
                 )
-                self.key_repeat_delay = 8
+                self.key_repeat_delay = 10
 
             # Parameter adjustment
             if keys[pygame.K_h] or keys[pygame.K_LEFT]:
@@ -125,7 +123,6 @@ class MenuScreen:
             self.key_repeat_delay -= 1
 
     def update(self, dt: float):
-        """Update menu - key repeat timing is now handled in handle_event"""
         self.handle_event(pygame.event.Event)
         pass
 
@@ -134,7 +131,7 @@ class MenuScreen:
         screen.fill(c.BLACK)
 
         # Title
-        title_text = "DARWIN - Simulatore Evoluzione"
+        title_text = "DARWIN"
         title_x = (c.SCREEN_WIDTH - text_width(title_text, c.FONT_SIZE_LARGE)) // 2
         draw_text(screen, title_text, title_x, 100, c.WHITE, c.FONT_SIZE_LARGE)
 
