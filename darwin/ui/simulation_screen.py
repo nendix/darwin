@@ -2,9 +2,7 @@ import pygame
 from darwin import config as c
 from .ui_utils import draw_text, text_width
 
-
 class SimulationScreen:
-    """Simulation screen showing the evolution in action"""
 
     def __init__(self, app, simulation):
         self.app = app
@@ -13,7 +11,6 @@ class SimulationScreen:
         self.paused = False
 
     def handle_event(self, event: pygame.event.Event):
-        """Handle simulation events"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 self.app.show_statistics(self.simulation.get_statistics())
@@ -27,7 +24,6 @@ class SimulationScreen:
                 self.simulation.decrease_speed()
 
     def update(self, dt: float):
-        """Update simulation"""
         if not self.paused:
             self.simulation.update(dt)
 
@@ -36,7 +32,6 @@ class SimulationScreen:
             self.app.show_statistics(self.simulation.get_statistics())
 
     def draw(self, screen: pygame.Surface):
-        """Draw simulation screen"""
         screen.fill(c.BLACK)
 
         # Draw simulation entities
@@ -90,7 +85,6 @@ class SimulationScreen:
             y_offset += 20
 
     def _draw_simulation_hud(self, screen: pygame.Surface, simulation_state: dict):
-        """Draw HUD for simulation screen"""
 
         y_offset = 20
 

@@ -1,6 +1,3 @@
-"""
-Darwin - Main Simulation Engine
-"""
 
 import random
 import time
@@ -10,9 +7,7 @@ from ..entities import Predator, Prey, Food, Entity
 from ..genetics.operations import GeneticOperations
 from darwin import config as c
 
-
 class Simulation:
-    """Main simulation class that manages the evolution process"""
 
     def __init__(self, params: Dict[str, Any]):
         self.params = params
@@ -39,7 +34,6 @@ class Simulation:
         self._record_population_data()
 
     def _initialize_populations(self):
-        """Initialize predator and prey populations"""
         # Create predators
         for _ in range(self.params["predator_count"]):
             x = random.uniform(50, c.SCREEN_WIDTH - 50)
@@ -58,7 +52,6 @@ class Simulation:
         self._setup_entity_statistics_tracking()
 
     def _spawn_food(self):
-        """Spawn food randomly across the world"""
         current_food = len(
             [e for e in self.entities if isinstance(e, Food) and e.available]
         )
@@ -71,7 +64,6 @@ class Simulation:
             self.entities.append(food)
 
     def _record_population_data(self):
-        """Record current population counts for statistics"""
         predator_count = len(
             [e for e in self.entities if isinstance(e, Predator) and e.alive]
         )
@@ -84,7 +76,6 @@ class Simulation:
         )
 
     def update(self, dt: float):
-        """Update simulation state"""
         # Adjust dt by simulation speed
         dt *= self.speed
 
@@ -122,19 +113,15 @@ class Simulation:
             self._record_population_data()
 
     def increase_speed(self):
-        """Increase simulation speed"""
         self.speed = min(c.MAX_SIMULATION_SPEED, self.speed + 1)
 
     def decrease_speed(self):
-        """Decrease simulation speed"""
         self.speed = max(c.MIN_SIMULATION_SPEED, self.speed - 1)
 
     def is_finished(self) -> bool:
-        """Check if simulation is finished"""
         return self.time_remaining <= 0
 
     def draw(self, screen, show_vision: bool):
-        """Draw all entities"""
         # Sort entities by type for proper layering (food, prey, predators)
         food_entities = [e for e in self.entities if isinstance(e, Food)]
         prey_entities = [e for e in self.entities if isinstance(e, Prey)]
@@ -147,7 +134,6 @@ class Simulation:
             entity.draw(screen, show_vision)
 
     def get_statistics(self) -> Dict[str, Any]:
-        """Get comprehensive simulation statistics"""
         predator_count = len(
             [e for e in self.entities if isinstance(e, Predator) and e.alive]
         )
@@ -185,7 +171,6 @@ class Simulation:
         }
 
     def _calculate_genome_statistics(self, species: str) -> Dict[str, float]:
-        """Calculate average genome statistics for a species"""
         if species == "predator":
             entities = [e for e in self.entities if isinstance(e, Predator) and e.alive]
             if not entities:
@@ -225,20 +210,16 @@ class Simulation:
         return {}
 
     def _setup_entity_statistics_tracking(self):
-        """Setup statistics tracking for entities"""
         # This is a workaround to pass statistics tracking to entities
         # We'll use a different approach in the entity reproduction methods
         pass
 
-
 class PopulationManager:
-    """Manages population dynamics and evolution"""
 
     @staticmethod
     def check_reproduction_opportunities(
         entities: List[Entity],
     ) -> List[Tuple[Entity, Entity]]:
-        """Check for reproduction opportunities between entities"""
         reproduction_pairs = []
 
         # Check predator reproduction
@@ -261,7 +242,6 @@ class PopulationManager:
     def handle_reproduction(
         parent1: Entity, parent2: Entity, entities: List[Entity]
     ) -> bool:
-        """Handle reproduction between two entities"""
         if isinstance(parent1, Predator) and isinstance(parent2, Predator):
             # Create predator offspring
             child_genome = GeneticOperations.crossover_predator(

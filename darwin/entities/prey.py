@@ -1,6 +1,3 @@
-"""
-Darwin - Prey Entity Implementation
-"""
 
 import math
 import pygame
@@ -11,9 +8,7 @@ from darwin import config as c
 from ..genetics.operations import GeneticOperations
 from ..genetics.genomes import PreyGenome, GenomeFactory
 
-
 class Prey(Entity):
-    """Prey entity that avoids predators and seeks food"""
 
     def __init__(self, x: float, y: float, genome: Optional[PreyGenome] = None):
         if genome is None:
@@ -21,11 +16,9 @@ class Prey(Entity):
         super().__init__(x, y, genome)
 
     def can_see(self, target: Entity) -> bool:
-        """Prey have 360-degree vision"""
         return super().can_see(target)  # Use base distance check only
 
     def update(self, dt: float, entities: List[Entity]):
-        """Update prey behavior"""
         if not self.alive:
             return
 
@@ -49,7 +42,6 @@ class Prey(Entity):
         self.check_collision(entities)
 
     def _survival_behavior(self, entities: List[Entity], dt: float):
-        """Survival behavior - avoid predators and seek food"""
         # Find closest visible predator
         from .predator import Predator  # Import here to avoid circular import
 
@@ -74,7 +66,6 @@ class Prey(Entity):
                 self.random_walk(dt)
 
     def _seek_mate(self, entities: List[Entity], dt: float):
-        """Seek another prey for reproduction"""
         potential_mates = [
             e
             for e in entities
@@ -92,14 +83,12 @@ class Prey(Entity):
             self.random_walk(dt)
 
     def _eat_food(self, food, entities: List[Entity]):
-        """Eat food and gain energy"""
         self.energy = min(self.max_energy, self.energy + food.energy_value)
         self.reproduction_score += c.PREY_EATING_GAIN
         food.available = False
         entities.remove(food)
 
     def _reproduce(self, mate, entities: List[Entity]):
-        """Reproduce with another prey"""
         # Create offspring
         child_genome = GeneticOperations.crossover_prey(self.genome, mate.genome)
         child = Prey(self.x, self.y, child_genome)
@@ -112,7 +101,6 @@ class Prey(Entity):
         mate.can_reproduce = False
 
     def take_damage(self, damage: float):
-        """Take damage from predator attack"""
         self.damage_taken += damage
         if self.damage_taken >= self.genome.attack_resistance:
             self.alive = False
@@ -122,7 +110,6 @@ class Prey(Entity):
         screen: pygame.Surface,
         show_vision: bool = False,
     ):
-        """Draw prey as blue circle with optional vision range"""
         screen_x, screen_y = int(self.x), int(self.y)
 
         if (

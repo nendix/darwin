@@ -1,6 +1,3 @@
-"""
-Entities Module
-"""
 
 from .base_entity import Entity
 from .food import Food

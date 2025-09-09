@@ -1,6 +1,3 @@
-"""
-Darwin - Configuration and Constants
-"""
 
 # Screen dimensions
 SCREEN_WIDTH = 1500

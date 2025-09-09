@@ -1,13 +1,8 @@
-"""
-Darwin - Utility Functions
-"""
 
 import math
 from typing import Dict, List, Any
 
-
 def calculate_genome_diversity(genomes: List[Any]) -> Dict[str, float]:
-    """Calculate genetic diversity metrics for a population"""
     if not genomes:
         return {}
     

@@ -1,18 +1,12 @@
-"""
-Darwin - Statistics and Report Generation
-"""
 
 import matplotlib.pyplot as plt
 from typing import Dict, Any
 import os
 
-
 class Plotter:
-    """Statistics analyzer for generating simulation reports"""
 
     @staticmethod
     def generate_report(statistics: Dict[str, Any], output_dir: str = "reports") -> str:
-        """Generate simulation reports with three matplotlib graphs"""
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
@@ -26,7 +20,6 @@ class Plotter:
 
     @staticmethod
     def _create_population_graph(statistics: Dict[str, Any], output_dir: str) -> str:
-        """Create graph showing population trends over time"""
         pop_history = statistics.get("population_history", {})
 
         plt.style.use("dark_background")
@@ -95,7 +88,6 @@ class Plotter:
     def _create_predator_genome_graph(
         statistics: Dict[str, Any], output_dir: str
     ) -> str:
-        """Create bar chart showing average predator genome traits"""
         genome_stats = statistics.get("genome_statistics", {})
         predator_stats = genome_stats.get("predators", {})
 
@@ -162,7 +154,6 @@ class Plotter:
 
     @staticmethod
     def _create_prey_genome_graph(statistics: Dict[str, Any], output_dir: str) -> str:
-        """Create bar chart showing average prey genome traits"""
         genome_stats = statistics.get("genome_statistics", {})
         prey_stats = genome_stats.get("prey", {})
 

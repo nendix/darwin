@@ -1,7 +1,3 @@
-"""
-Darwin - Predator Entity
-"""
-
 import math
 import random
 import pygame
@@ -13,10 +9,7 @@ from ..genetics.genomes import GenomeFactory
 from ..genetics.operations import GeneticOperations
 from darwin import config as c
 
-
 class Predator(Entity):
-    """Predator entity that hunts prey"""
-
     def __init__(self, x: float, y: float, genome: Optional[PredatorGenome] = None):
         if genome is None:
             genome = GenomeFactory.create_random_predator_genome()
@@ -24,7 +17,6 @@ class Predator(Entity):
         self.target_prey = None
 
     def can_see(self, target: Entity) -> bool:
-        """Check if the predator can see a target entity (cone vision)"""
         # First check distance
         if not super().can_see(target):
             return False
@@ -33,7 +25,6 @@ class Predator(Entity):
         return self._is_in_vision_cone(target)
 
     def _is_in_vision_cone(self, target: Entity) -> bool:
-        """Predators have cone vision in front of them"""
         angle_to_target = self.angle_to(target)
         angle_diff = abs(angle_to_target - self.direction)
 
@@ -45,7 +36,6 @@ class Predator(Entity):
         return angle_diff <= half_cone_angle
 
     def update(self, dt: float, entities: List[Entity]):
-        """Update predator behavior"""
         if not self.alive:
             return
 
@@ -69,7 +59,6 @@ class Predator(Entity):
         self.check_collision(entities)
 
     def _hunt_behavior(self, entities: List[Entity], dt: float):
-        """Hunting behavior - find and chase prey"""
         # Find closest visible prey
         from .prey import Prey  # Import here to avoid circular import
 
@@ -87,7 +76,6 @@ class Predator(Entity):
             self.random_walk(dt)
 
     def _seek_mate(self, entities: List[Entity], dt: float):
-        """Seek another predator for reproduction"""
         potential_mates = [
             e
             for e in entities
@@ -105,7 +93,6 @@ class Predator(Entity):
             self.random_walk(dt)
 
     def _attack_prey(self, prey):
-        """Attack a prey entity"""
         from .prey import Prey  # Import here to avoid circular import
 
         if isinstance(prey, Prey):
@@ -113,7 +100,6 @@ class Predator(Entity):
             self.reproduction_score += c.PREDATOR_EATING_GAIN
 
     def _reproduce(self, mate, entities: List[Entity]):
-        """Reproduce with another predator"""
         # Create offspring
         child_genome = GeneticOperations.crossover_predator(self.genome, mate.genome)
         child_x = (self.x + mate.x) / 2 + random.uniform(-20, 20)
@@ -132,7 +118,6 @@ class Predator(Entity):
         screen: pygame.Surface,
         show_vision: bool = False,
     ):
-        """Draw predator as red circle with optional vision cone"""
         screen_x, screen_y = int(self.x), int(self.y)
 
         if (
@@ -148,7 +133,6 @@ class Predator(Entity):
             pygame.draw.circle(screen, color, (screen_x, screen_y), c.PREDATOR_RADIUS)
 
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
-        """Draw the predator's vision cone as simple lines"""
         vision_range = (self.genome.vision / 100.0) * 150
         half_cone_angle = math.radians(c.PREDATOR_VISION_ANGLE / 2)
 

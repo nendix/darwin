@@ -3,24 +3,19 @@ from ..analysis import Plotter
 from darwin import config as c
 from .ui_utils import draw_text
 
-
 class StatisticsScreen:
-    """Statistics screen showing simulation results"""
 
     def __init__(self, app, statistics):
         self.app = app
         self.statistics = statistics
 
     def restart_simulation(self):
-        """Start a new simulation with same parameters"""
         self.app.restart_simulation()
 
     def back_to_menu(self):
-        """Return to main menu"""
         self.app.show_menu()
 
     def save_report(self):
-        """Save comprehensive simulation report"""
         try:
             reports_dir = Plotter.generate_report(self.statistics)
             print(f"Grafici salvati nella cartella: {reports_dir}")
@@ -28,7 +23,6 @@ class StatisticsScreen:
             print(f"Errore nel salvare i grafici: {e}")
 
     def handle_event(self, event: pygame.event.Event):
-        """Handle statistics screen events"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 # Q: Chiudere l'app
@@ -50,7 +44,6 @@ class StatisticsScreen:
         pass
 
     def draw(self, screen: pygame.Surface):
-        """Draw statistics screen"""
         screen.fill(c.BLACK)
 
         # Title
@@ -129,7 +122,6 @@ class StatisticsScreen:
     def _draw_statistics_summary(
         self, screen: pygame.Surface, stats: dict, y_start: int = 50
     ):
-        """Draw statistics summary"""
         y_offset = y_start
 
         if "survival_stats" in stats:

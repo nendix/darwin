@@ -3,9 +3,7 @@ import sys
 from darwin import config as c
 from .ui_utils import draw_text, text_width
 
-
 class MenuScreen:
-    """Main menu screen with simulation parameters"""
 
     def __init__(self, app):
         self.app = app
@@ -13,7 +11,6 @@ class MenuScreen:
         self.setup_ui()
 
     def setup_ui(self):
-        """Setup menu UI components"""
         # Simple text-based menu parameters
         self.parameters = [
             {
@@ -52,7 +49,6 @@ class MenuScreen:
         self.selected_index = 0
 
     def _modify_parameter(self, direction):
-        """Modify the selected parameter"""
         param = self.parameters[self.selected_index]
 
         if param.get("type") == "toggle":
@@ -68,7 +64,6 @@ class MenuScreen:
             param["value"] = max(param["min"], min(param["max"], new_value))
 
     def start_simulation(self):
-        """Start the simulation with current parameters"""
         params = {
             "prey_count": self.parameters[0]["value"],
             "predator_count": self.parameters[1]["value"],
@@ -80,12 +75,10 @@ class MenuScreen:
         self.app.start_simulation(params)
 
     def quit_game(self):
-        """Quit the application"""
         pygame.quit()
         sys.exit()
 
     def handle_event(self, event: pygame.event.Event):
-        """Handle both discrete events and continuous input"""
         # Handle discrete events
         if event.type == pygame.QUIT:
             self.quit_game()
@@ -127,7 +120,6 @@ class MenuScreen:
         pass
 
     def draw(self, screen: pygame.Surface):
-        """Draw the menu screen"""
         screen.fill(c.BLACK)
 
         # Title
