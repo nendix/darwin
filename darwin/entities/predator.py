@@ -5,7 +5,7 @@ Darwin - Predator Entity
 import math
 import random
 import pygame
-from typing import List, Tuple, Optional
+from typing import List, Optional
 
 from .base_entity import Entity
 from ..genetics.genomes import PredatorGenome
@@ -130,11 +130,10 @@ class Predator(Entity):
     def draw(
         self,
         screen: pygame.Surface,
-        camera_offset: Tuple[int, int],
         show_vision: bool = False,
     ):
         """Draw predator as red circle with optional vision cone"""
-        screen_x, screen_y = self.get_screen_position(camera_offset)
+        screen_x, screen_y = int(self.x), int(self.y)
 
         if (
             -50 <= screen_x <= c.SCREEN_WIDTH + 50
@@ -171,5 +170,5 @@ class Predator(Entity):
             screen, c.RED, (screen_x, screen_y), (right_end_x, right_end_y), 2
         )
         pygame.draw.line(
-            screen, c.RED, (left_end_x, left_end_y), (right_end_x, right_end_y), 1
+            screen, c.RED, (left_end_x, left_end_y), (right_end_x, right_end_y), 2
         )

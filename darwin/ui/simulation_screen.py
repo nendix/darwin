@@ -39,8 +39,8 @@ class SimulationScreen:
         """Draw simulation screen"""
         screen.fill(c.BLACK)
 
-        # Draw simulation entities (no camera offset needed)
-        self.simulation.draw(screen, (0, 0), self.show_vision)
+        # Draw simulation entities
+        self.simulation.draw(screen, self.show_vision)
 
         # Draw HUD
         simulation_state = {

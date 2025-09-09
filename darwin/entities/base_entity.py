@@ -5,7 +5,7 @@ Darwin - Base Entity Class for Genetic Entities
 import math
 import random
 import pygame
-from typing import List, Tuple, Optional
+from typing import List, Optional
 
 from darwin import config as c
 
@@ -34,19 +34,34 @@ class Entity:
     def draw(
         self,
         screen: pygame.Surface,
-        camera_offset: Tuple[int, int],
         show_vision: bool = False,
     ):
         """Draw entity on screen - to be implemented by subclasses"""
         pass
 
     def distance_to(self, other) -> float:
-        """Calculate distance to another entity (works with any object with x,y)"""
-        return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
+        """Calculate distance to another entity in toroidal world"""
+        dx = abs(self.x - other.x)
+        dy = abs(self.y - other.y)
+
+        # Consider wrapping around edges (toroidal distance)
+        dx = min(dx, c.SCREEN_WIDTH - dx)
+        dy = min(dy, c.SCREEN_HEIGHT - dy)
+
+        return math.sqrt(dx * dx + dy * dy)
 
     def angle_to(self, other) -> float:
-        """Calculate angle to another entity in radians"""
-        return math.atan2(other.y - self.y, other.x - self.x)
+        """Calculate angle to another entity in toroidal world"""
+        dx = other.x - self.x
+        dy = other.y - self.y
+
+        # Consider wrapping around edges for shortest path
+        if abs(dx) > c.SCREEN_WIDTH / 2:
+            dx = dx - math.copysign(c.SCREEN_WIDTH, dx)
+        if abs(dy) > c.SCREEN_HEIGHT / 2:
+            dy = dy - math.copysign(c.SCREEN_HEIGHT, dy)
+
+        return math.atan2(dy, dx)
 
     def move_in_direction(self, direction: float, speed: float, dt: float):
         """Move entity in a specific direction with given speed"""
@@ -54,9 +69,9 @@ class Entity:
         new_x = self.x + math.cos(direction) * distance
         new_y = self.y + math.sin(direction) * distance
 
-        # Keep within screen bounds
-        self.x = max(10, min(c.SCREEN_WIDTH - 10, new_x))
-        self.y = max(10, min(c.SCREEN_HEIGHT - 10, new_y))
+        # Toroidal world - wrap around screen edges
+        self.x = new_x % c.SCREEN_WIDTH
+        self.y = new_y % c.SCREEN_HEIGHT
 
     def check_collision(self, entities):
         """Check for collision with entities of the same species and resolve"""
@@ -64,16 +79,25 @@ class Entity:
         collision_distance = entity_radius * 2  # Minimum distance between centers
 
         for other in entities:
+            # Check if other entity is alive/available
+            other_alive = (hasattr(other, 'available') and other.available) or (hasattr(other, 'alive') and other.alive)
+            
             if (
                 other != self
-                and other.alive
+                and other_alive
                 and type(other) == type(self)  # Same species
                 and self.distance_to(other) < collision_distance
             ):
 
-                # Calculate separation vector
+                # Calculate separation vector (toroidal)
                 dx = self.x - other.x
                 dy = self.y - other.y
+
+                # Consider wrapping for shortest separation
+                if abs(dx) > c.SCREEN_WIDTH / 2:
+                    dx = dx - math.copysign(c.SCREEN_WIDTH, dx)
+                if abs(dy) > c.SCREEN_HEIGHT / 2:
+                    dy = dy - math.copysign(c.SCREEN_HEIGHT, dy)
 
                 # Avoid division by zero
                 if dx == 0 and dy == 0:
@@ -88,13 +112,9 @@ class Entity:
                     self.x += (dx / distance) * separation_strength
                     self.y += (dy / distance) * separation_strength
 
-                    # Keep within bounds after separation
-                    self.x = max(
-                        entity_radius, min(c.SCREEN_WIDTH - entity_radius, self.x)
-                    )
-                    self.y = max(
-                        entity_radius, min(c.SCREEN_HEIGHT - entity_radius, self.y)
-                    )
+                    # Apply toroidal wrapping after separation
+                    self.x = self.x % c.SCREEN_WIDTH
+                    self.y = self.y % c.SCREEN_HEIGHT
 
     def move(self, dt: float):
         """Move based on genome speed"""
@@ -143,7 +163,9 @@ class Entity:
         visible_entities = [
             e
             for e in entities
-            if isinstance(e, entity_type) and e.alive and self.can_see(e)
+            if isinstance(e, entity_type) 
+            and ((hasattr(e, 'available') and e.available) or (hasattr(e, 'alive') and e.alive))
+            and self.can_see(e)
         ]
 
         if not visible_entities:
@@ -166,8 +188,4 @@ class Entity:
 
     def get_vision_range(self) -> float:
         """Get vision range based on genome"""
-        return (self.genome.vision / 100.0) * 150  # Max vision range of 150 pixels
-
-    def get_screen_position(self, camera_offset: Tuple[int, int]) -> Tuple[int, int]:
-        """Get screen position accounting for camera offset"""
-        return (int(self.x - camera_offset[0]), int(self.y - camera_offset[1]))
+        return (self.genome.vision / 100.0) * 150  # Max vision range of 150px

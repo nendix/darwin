@@ -60,7 +60,7 @@ class Simulation:
     def _spawn_food(self):
         """Spawn food randomly across the world"""
         current_food = len(
-            [e for e in self.entities if isinstance(e, Food) and e.alive]
+            [e for e in self.entities if isinstance(e, Food) and e.available]
         )
         food_needed = self.params["food_count"] - current_food
 
@@ -98,8 +98,12 @@ class Simulation:
         for entity in self.entities[
             :
         ]:  # Use slice to avoid modification during iteration
-            if entity.alive:
-                entity.update(dt, self.entities)
+            if isinstance(entity, Food):
+                if entity.available:
+                    entity.update(dt, self.entities)
+            else:
+                if entity.alive:
+                    entity.update(dt, self.entities)
 
         # Count reproductions based on entity count increase
         final_count = len(self.entities)
@@ -108,7 +112,7 @@ class Simulation:
             self.total_reproductions += new_births
 
         # Remove dead entities
-        self.entities = [e for e in self.entities if e.alive]
+        self.entities = [e for e in self.entities if (isinstance(e, Food) and e.available) or (not isinstance(e, Food) and e.alive)]
 
         # Maintain food supply
         self._spawn_food()
@@ -129,7 +133,7 @@ class Simulation:
         """Check if simulation is finished"""
         return self.time_remaining <= 0
 
-    def draw(self, screen, camera_offset: Tuple[int, int], show_vision: bool):
+    def draw(self, screen, show_vision: bool):
         """Draw all entities"""
         # Sort entities by type for proper layering (food, prey, predators)
         food_entities = [e for e in self.entities if isinstance(e, Food)]
@@ -137,8 +141,10 @@ class Simulation:
         predator_entities = [e for e in self.entities if isinstance(e, Predator)]
 
         # Draw in order: food, prey, predators
-        for entity in food_entities + prey_entities + predator_entities:
-            entity.draw(screen, camera_offset, show_vision)
+        for entity in food_entities:
+            entity.draw(screen)
+        for entity in prey_entities + predator_entities:
+            entity.draw(screen, show_vision)
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get comprehensive simulation statistics"""
@@ -239,14 +245,14 @@ class PopulationManager:
         predators = [e for e in entities if isinstance(e, Predator) and e.can_reproduce]
         for i, predator1 in enumerate(predators):
             for predator2 in predators[i + 1 :]:
-                if predator1.distance_to(predator2) <= c.PREDATOR_RADIUS * 2:
+                if predator1.distance_to(predator2) <= c.PREDATOR_RADIUS * 10:
                     reproduction_pairs.append((predator1, predator2))
 
         # Check prey reproduction
         prey = [e for e in entities if isinstance(e, Prey) and e.can_reproduce]
         for i, prey1 in enumerate(prey):
             for prey2 in prey[i + 1 :]:
-                if prey1.distance_to(prey2) <= c.PREY_RADIUS * 2:
+                if prey1.distance_to(prey2) <= c.PREY_RADIUS * 10:
                     reproduction_pairs.append((prey1, prey2))
 
         return reproduction_pairs

@@ -95,7 +95,7 @@ class Prey(Entity):
         """Eat food and gain energy"""
         self.energy = min(self.max_energy, self.energy + food.energy_value)
         self.reproduction_score += c.PREY_EATING_GAIN
-        food.alive = False
+        food.available = False
         entities.remove(food)
 
     def _reproduce(self, mate, entities: List[Entity]):
@@ -120,11 +120,10 @@ class Prey(Entity):
     def draw(
         self,
         screen: pygame.Surface,
-        camera_offset: Tuple[int, int],
         show_vision: bool = False,
     ):
         """Draw prey as blue circle with optional vision range"""
-        screen_x, screen_y = self.get_screen_position(camera_offset)
+        screen_x, screen_y = int(self.x), int(self.y)
 
         if (
             -50 <= screen_x <= c.SCREEN_WIDTH + 50
