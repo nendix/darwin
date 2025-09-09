@@ -1,6 +1,6 @@
 import pygame
 import sys
-from ..config import *
+from darwin import config as c
 from .ui_utils import draw_text, text_width
 
 
@@ -18,33 +18,33 @@ class MenuScreen:
         self.parameters = [
             {
                 "name": "Prede",
-                "value": DEFAULT_PREY_COUNT,
-                "min": MIN_PREY_COUNT,
-                "max": MAX_PREY_COUNT,
+                "value": c.DEFAULT_PREY_COUNT,
+                "min": c.MIN_PREY_COUNT,
+                "max": c.MAX_PREY_COUNT,
             },
             {
                 "name": "Predatori",
-                "value": DEFAULT_PREDATOR_COUNT,
-                "min": MIN_PREDATOR_COUNT,
-                "max": MAX_PREDATOR_COUNT,
+                "value": c.DEFAULT_PREDATOR_COUNT,
+                "min": c.MIN_PREDATOR_COUNT,
+                "max": c.MAX_PREDATOR_COUNT,
             },
             {
                 "name": "Cibo",
-                "value": DEFAULT_FOOD_COUNT,
-                "min": MIN_FOOD_COUNT,
-                "max": MAX_FOOD_COUNT,
+                "value": c.DEFAULT_FOOD_COUNT,
+                "min": c.MIN_FOOD_COUNT,
+                "max": c.MAX_FOOD_COUNT,
             },
             {
                 "name": "Durata (secondi)",
-                "value": DEFAULT_SIMULATION_DURATION,
-                "min": MIN_SIMULATION_DURATION,
-                "max": MAX_SIMULATION_DURATION,
+                "value": c.DEFAULT_SIMULATION_DURATION,
+                "min": c.MIN_SIMULATION_DURATION,
+                "max": c.MAX_SIMULATION_DURATION,
             },
             {
                 "name": "Velocità Simulazione",
-                "value": DEFAULT_SIMULATION_SPEED,
-                "min": MIN_SIMULATION_SPEED,
-                "max": MAX_SIMULATION_SPEED,
+                "value": c.DEFAULT_SIMULATION_SPEED,
+                "min": c.MIN_SIMULATION_SPEED,
+                "max": c.MAX_SIMULATION_SPEED,
             },
             {"name": "Raggio Visivo", "value": False, "type": "toggle"},
         ]
@@ -131,17 +131,19 @@ class MenuScreen:
 
     def draw(self, screen: pygame.Surface):
         """Draw the menu screen"""
-        screen.fill(BLACK)
+        screen.fill(c.BLACK)
 
         # Title
         title_text = "DARWIN - Simulatore Evoluzione"
-        title_x = (SCREEN_WIDTH - text_width(title_text, FONT_SIZE_LARGE)) // 2
-        draw_text(screen, title_text, title_x, 100, WHITE, FONT_SIZE_LARGE)
+        title_x = (c.SCREEN_WIDTH - text_width(title_text, c.FONT_SIZE_LARGE)) // 2
+        draw_text(screen, title_text, title_x, 100, c.WHITE, c.FONT_SIZE_LARGE)
 
         # Subtitle
         subtitle_text = "Configura i parametri della simulazione"
-        subtitle_x = (SCREEN_WIDTH - text_width(subtitle_text, FONT_SIZE_MEDIUM)) // 2
-        draw_text(screen, subtitle_text, subtitle_x, 140, GREY, FONT_SIZE_MEDIUM)
+        subtitle_x = (
+            c.SCREEN_WIDTH - text_width(subtitle_text, c.FONT_SIZE_MEDIUM)
+        ) // 2
+        draw_text(screen, subtitle_text, subtitle_x, 140, c.GREY, c.FONT_SIZE_MEDIUM)
 
         # Parameters
         y_start = 220
@@ -150,7 +152,7 @@ class MenuScreen:
         # Row width: longest name + gap + value area
         max_name_width = 0
         for param in self.parameters:
-            name_width = text_width(param["name"], FONT_SIZE_MEDIUM)
+            name_width = text_width(param["name"], c.FONT_SIZE_MEDIUM)
             max_name_width = max(max_name_width, name_width)
 
         gap_width = (
@@ -158,10 +160,10 @@ class MenuScreen:
         )
         value_area_width = 80  # Fixed width for value area
         row_width = max_name_width + gap_width + value_area_width
-        center_x = (SCREEN_WIDTH - row_width) // 2
+        center_x = (c.SCREEN_WIDTH - row_width) // 2
 
         for i, param in enumerate(self.parameters):
-            color = YELLOW if i == self.selected_index else WHITE
+            color = c.YELLOW if i == self.selected_index else c.WHITE
 
             # Draw parameter name (left-aligned from center position)
             name_x = center_x
@@ -171,7 +173,7 @@ class MenuScreen:
                 name_x,
                 y_start + i * 40,
                 color,
-                FONT_SIZE_MEDIUM,
+                c.FONT_SIZE_MEDIUM,
             )
 
             # Draw parameter value (right-aligned in the value area)
@@ -181,7 +183,7 @@ class MenuScreen:
                 value_text = str(param["value"])
 
             # Calculate right-aligned position for value
-            value_text_width = text_width(value_text, FONT_SIZE_MEDIUM)
+            value_text_width = text_width(value_text, c.FONT_SIZE_MEDIUM)
             value_x = (
                 center_x
                 + max_name_width
@@ -195,19 +197,19 @@ class MenuScreen:
                 value_x,
                 y_start + i * 40,
                 color,
-                FONT_SIZE_MEDIUM,
+                c.FONT_SIZE_MEDIUM,
             )
 
         # Start instruction
         start_text = "Premi SPACE per iniziare"
-        start_x = (SCREEN_WIDTH - text_width(start_text, FONT_SIZE_MEDIUM)) // 2
+        start_x = (c.SCREEN_WIDTH - text_width(start_text, c.FONT_SIZE_MEDIUM)) // 2
         draw_text(
             screen,
             start_text,
             start_x,
             y_start + len(self.parameters) * 40 + 60,
-            GREEN,
-            FONT_SIZE_MEDIUM,
+            c.GREEN,
+            c.FONT_SIZE_MEDIUM,
         )
 
         # Instructions
@@ -221,20 +223,20 @@ class MenuScreen:
         # Find the longest instruction for centering
         max_instruction_width = 0
         for instruction in instructions:
-            width = text_width(instruction, FONT_SIZE_SMALL)
+            width = text_width(instruction, c.FONT_SIZE_SMALL)
             max_instruction_width = max(max_instruction_width, width)
 
         # Center the instructions block
-        instructions_start_x = (SCREEN_WIDTH - max_instruction_width) // 2
+        instructions_start_x = (c.SCREEN_WIDTH - max_instruction_width) // 2
 
-        y_offset = SCREEN_HEIGHT - 120
+        y_offset = c.SCREEN_HEIGHT - 120
         for instruction in instructions:
             draw_text(
                 screen,
                 instruction,
                 instructions_start_x,
                 y_offset,
-                GREY,
-                FONT_SIZE_SMALL,
+                c.GREY,
+                c.FONT_SIZE_SMALL,
             )
             y_offset += 25

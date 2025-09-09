@@ -1,18 +1,12 @@
-#!/usr/bin/env python3
-"""
-Darwin - Genetic Algorithm Evolution Simulator
-Main entry point for the application
-"""
-
 import pygame
 import sys
-from src.app import DarwinApp
+from darwin import app as a
 
 
 def main():
     """Main function to start the Darwin application"""
     try:
-        app = DarwinApp()
+        app = a.DarwinApp()
         app.run()
     except KeyboardInterrupt:
         print("\nApplication interrupted by user")

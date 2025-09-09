@@ -1,7 +1,7 @@
 import pygame
 from ..analysis import Plotter
-from ..config import *
-from .ui_utils import draw_text, text_width
+from darwin import config as c
+from .ui_utils import draw_text
 
 
 class StatisticsScreen:
@@ -51,11 +51,11 @@ class StatisticsScreen:
 
     def draw(self, screen: pygame.Surface):
         """Draw statistics screen"""
-        screen.fill(BLACK)
+        screen.fill(c.BLACK)
 
         # Title
         title_text = "STATISTICHE SIMULAZIONE"
-        draw_text(screen, title_text, 50, 50, WHITE, FONT_SIZE_LARGE)
+        draw_text(screen, title_text, 50, 50, c.WHITE, c.FONT_SIZE_LARGE)
 
         # Draw statistics summary
         y_offset = self._draw_statistics_summary(screen, self.statistics, 100)
@@ -64,7 +64,7 @@ class StatisticsScreen:
         if "final_populations" in self.statistics:
             populations = self.statistics["final_populations"]
 
-            draw_text(screen, "Popolazioni:", 50, y_offset, WHITE, FONT_SIZE_LARGE)
+            draw_text(screen, "Popolazioni:", 50, y_offset, c.WHITE, c.FONT_SIZE_LARGE)
             y_offset += 35
 
             predators = populations.get("predators", 0)
@@ -75,16 +75,16 @@ class StatisticsScreen:
                 f"Predatori: {predators}",
                 70,
                 y_offset,
-                RED,
-                FONT_SIZE_MEDIUM,
+                c.RED,
+                c.FONT_SIZE_MEDIUM,
             )
             draw_text(
                 screen,
                 f"Prede: {prey}",
                 70,
                 y_offset + 25,
-                BLUE,
-                FONT_SIZE_MEDIUM,
+                c.BLUE,
+                c.FONT_SIZE_MEDIUM,
             )
             y_offset += 60
 
@@ -97,8 +97,8 @@ class StatisticsScreen:
                 "Evoluzione:",
                 50,
                 y_offset,
-                WHITE,
-                FONT_SIZE_LARGE,
+                c.WHITE,
+                c.FONT_SIZE_LARGE,
             )
             y_offset += 35
 
@@ -109,8 +109,8 @@ class StatisticsScreen:
                 f"Riproduzioni: {reproductions}",
                 70,
                 y_offset,
-                WHITE,
-                FONT_SIZE_MEDIUM,
+                c.WHITE,
+                c.FONT_SIZE_MEDIUM,
             )
 
         # Instructions
@@ -121,9 +121,9 @@ class StatisticsScreen:
             "R - Riavvia simulazione",
         ]
 
-        y_offset = SCREEN_HEIGHT - 100
+        y_offset = c.SCREEN_HEIGHT - 100
         for instruction in instructions:
-            draw_text(screen, instruction, 50, y_offset, GREY, FONT_SIZE_SMALL)
+            draw_text(screen, instruction, 50, y_offset, c.GREY, c.FONT_SIZE_SMALL)
             y_offset += 25
 
     def _draw_statistics_summary(
@@ -139,8 +139,8 @@ class StatisticsScreen:
                 "Sopravvivenza:",
                 50,
                 y_offset,
-                WHITE,
-                FONT_SIZE_LARGE,
+                c.WHITE,
+                c.FONT_SIZE_LARGE,
             )
             y_offset += 30
 
@@ -152,16 +152,16 @@ class StatisticsScreen:
                 f"Predatori: {predator_survival:.1f}%",
                 70,
                 y_offset,
-                RED,
-                FONT_SIZE_MEDIUM,
+                c.RED,
+                c.FONT_SIZE_MEDIUM,
             )
             draw_text(
                 screen,
                 f"Prede: {prey_survival:.1f}%",
                 70,
                 y_offset + 25,
-                BLUE,
-                FONT_SIZE_MEDIUM,
+                c.BLUE,
+                c.FONT_SIZE_MEDIUM,
             )
             y_offset += 60
 

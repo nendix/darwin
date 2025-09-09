@@ -11,7 +11,7 @@ from .base_entity import Entity
 from ..genetics.genomes import PredatorGenome
 from ..genetics.genomes import GenomeFactory
 from ..genetics.operations import GeneticOperations
-from ..config import *
+from darwin import config as c
 
 
 class Predator(Entity):
@@ -41,7 +41,7 @@ class Predator(Entity):
         while angle_diff > math.pi:
             angle_diff = abs(angle_diff - 2 * math.pi)
 
-        half_cone_angle = math.radians(PREDATOR_VISION_ANGLE / 2)
+        half_cone_angle = math.radians(c.PREDATOR_VISION_ANGLE / 2)
         return angle_diff <= half_cone_angle
 
     def update(self, dt: float, entities: List[Entity]):
@@ -80,7 +80,7 @@ class Predator(Entity):
             self.turn_towards(closest_prey, 0.2)
 
             # Check for attack
-            if self.distance_to(closest_prey) <= PREDATOR_RADIUS + PREY_RADIUS:
+            if self.distance_to(closest_prey) <= c.PREDATOR_RADIUS + c.PREY_RADIUS:
                 self._attack_prey(closest_prey)
         else:
             self.target_prey = None
@@ -99,7 +99,7 @@ class Predator(Entity):
             self.turn_towards(closest_mate, 0.15)
 
             # Check for reproduction
-            if self.distance_to(closest_mate) <= PREDATOR_RADIUS * 2:
+            if self.distance_to(closest_mate) <= c.PREDATOR_RADIUS * 2:
                 self._reproduce(closest_mate, entities)
         else:
             self.random_walk(dt)
@@ -110,7 +110,7 @@ class Predator(Entity):
 
         if isinstance(prey, Prey):
             prey.take_damage(self.genome.attack_strength)
-            self.reproduction_score += PREDATOR_EATING_GAIN
+            self.reproduction_score += c.PREDATOR_EATING_GAIN
 
     def _reproduce(self, mate, entities: List[Entity]):
         """Reproduce with another predator"""
@@ -137,21 +137,21 @@ class Predator(Entity):
         screen_x, screen_y = self.get_screen_position(camera_offset)
 
         if (
-            -50 <= screen_x <= SCREEN_WIDTH + 50
-            and -50 <= screen_y <= SCREEN_HEIGHT + 50
+            -50 <= screen_x <= c.SCREEN_WIDTH + 50
+            and -50 <= screen_y <= c.SCREEN_HEIGHT + 50
         ):
             # Draw vision cone if enabled
             if show_vision:
                 self._draw_vision_cone(screen, screen_x, screen_y)
 
             # Draw predator
-            color = RED if not self.can_reproduce else ORANGE
-            pygame.draw.circle(screen, color, (screen_x, screen_y), PREDATOR_RADIUS)
+            color = c.RED if not self.can_reproduce else c.ORANGE
+            pygame.draw.circle(screen, color, (screen_x, screen_y), c.PREDATOR_RADIUS)
 
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
         """Draw the predator's vision cone as simple lines"""
         vision_range = (self.genome.vision / 100.0) * 150
-        half_cone_angle = math.radians(PREDATOR_VISION_ANGLE / 2)
+        half_cone_angle = math.radians(c.PREDATOR_VISION_ANGLE / 2)
 
         # Calculate cone edges
         left_angle = self.direction - half_cone_angle
@@ -164,10 +164,12 @@ class Predator(Entity):
         right_end_y = screen_y + math.sin(right_angle) * vision_range
 
         # Draw the cone outline with simple lines
-        pygame.draw.line(screen, RED, (screen_x, screen_y), (left_end_x, left_end_y), 2)
         pygame.draw.line(
-            screen, RED, (screen_x, screen_y), (right_end_x, right_end_y), 2
+            screen, c.RED, (screen_x, screen_y), (left_end_x, left_end_y), 2
         )
         pygame.draw.line(
-            screen, RED, (left_end_x, left_end_y), (right_end_x, right_end_y), 1
+            screen, c.RED, (screen_x, screen_y), (right_end_x, right_end_y), 2
+        )
+        pygame.draw.line(
+            screen, c.RED, (left_end_x, left_end_y), (right_end_x, right_end_y), 1
         )

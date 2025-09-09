@@ -3,12 +3,11 @@ Darwin - Prey Entity Implementation
 """
 
 import math
-import random
 import pygame
 from typing import List, Tuple, Optional
 
 from .base_entity import Entity
-from ..config import *
+from darwin import config as c
 from ..genetics.operations import GeneticOperations
 from ..genetics.genomes import PreyGenome, GenomeFactory
 
@@ -69,7 +68,7 @@ class Prey(Entity):
                 self.turn_towards(closest_food, 0.15)
 
                 # Check for eating
-                if self.distance_to(closest_food) <= PREY_RADIUS + FOOD_RADIUS:
+                if self.distance_to(closest_food) <= c.PREY_RADIUS + c.FOOD_RADIUS:
                     self._eat_food(closest_food, entities)
             else:
                 self.random_walk(dt)
@@ -87,7 +86,7 @@ class Prey(Entity):
             self.turn_towards(closest_mate, 0.15)
 
             # Check for reproduction
-            if self.distance_to(closest_mate) <= PREY_RADIUS * 2:
+            if self.distance_to(closest_mate) <= c.PREY_RADIUS * 2:
                 self._reproduce(closest_mate, entities)
         else:
             self.random_walk(dt)
@@ -95,7 +94,7 @@ class Prey(Entity):
     def _eat_food(self, food, entities: List[Entity]):
         """Eat food and gain energy"""
         self.energy = min(self.max_energy, self.energy + food.energy_value)
-        self.reproduction_score += PREY_EATING_GAIN
+        self.reproduction_score += c.PREY_EATING_GAIN
         food.alive = False
         entities.remove(food)
 
@@ -128,16 +127,16 @@ class Prey(Entity):
         screen_x, screen_y = self.get_screen_position(camera_offset)
 
         if (
-            -50 <= screen_x <= SCREEN_WIDTH + 50
-            and -50 <= screen_y <= SCREEN_HEIGHT + 50
+            -50 <= screen_x <= c.SCREEN_WIDTH + 50
+            and -50 <= screen_y <= c.SCREEN_HEIGHT + 50
         ):
             # Draw vision range if enabled (simple circle outline)
             if show_vision:
                 vision_range = self.get_vision_range()
                 pygame.draw.circle(
-                    screen, BLUE, (screen_x, screen_y), int(vision_range), 2
+                    screen, c.BLUE, (screen_x, screen_y), int(vision_range), 2
                 )
 
             # Draw prey
-            color = BLUE if not self.can_reproduce else YELLOW
-            pygame.draw.circle(screen, color, (screen_x, screen_y), PREY_RADIUS)
+            color = c.BLUE if not self.can_reproduce else c.YELLOW
+            pygame.draw.circle(screen, color, (screen_x, screen_y), c.PREY_RADIUS)

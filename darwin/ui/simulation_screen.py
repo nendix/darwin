@@ -1,5 +1,5 @@
 import pygame
-from ..config import *
+from darwin import config as c
 from .ui_utils import draw_text, text_width
 
 
@@ -37,7 +37,7 @@ class SimulationScreen:
 
     def draw(self, screen: pygame.Surface):
         """Draw simulation screen"""
-        screen.fill(BLACK)
+        screen.fill(c.BLACK)
 
         # Draw simulation entities (no camera offset needed)
         self.simulation.draw(screen, (0, 0), self.show_vision)
@@ -66,9 +66,14 @@ class SimulationScreen:
         # Pause indicator
         if self.paused:
             pause_text = "PAUSA"
-            pause_x = (SCREEN_WIDTH - text_width(pause_text, FONT_SIZE_LARGE)) // 2
+            pause_x = (c.SCREEN_WIDTH - text_width(pause_text, c.FONT_SIZE_LARGE)) // 2
             draw_text(
-                screen, pause_text, pause_x, SCREEN_HEIGHT // 2, YELLOW, FONT_SIZE_LARGE
+                screen,
+                pause_text,
+                pause_x,
+                c.SCREEN_HEIGHT // 2,
+                c.YELLOW,
+                c.FONT_SIZE_LARGE,
             )
 
         # Controls help (simplified)
@@ -79,9 +84,9 @@ class SimulationScreen:
             "+/-: Velocità",
         ]
 
-        y_offset = SCREEN_HEIGHT - 100
+        y_offset = c.SCREEN_HEIGHT - 100
         for control in controls:
-            draw_text(screen, control, 20, y_offset, WHITE, FONT_SIZE_SMALL)
+            draw_text(screen, control, 20, y_offset, c.WHITE, c.FONT_SIZE_SMALL)
             y_offset += 20
 
     def _draw_simulation_hud(self, screen: pygame.Surface, simulation_state: dict):
@@ -94,10 +99,20 @@ class SimulationScreen:
         prey_count = simulation_state.get("prey_count", 0)
 
         draw_text(
-            screen, f"Predatori: {predator_count}", 20, y_offset, RED, FONT_SIZE_MEDIUM
+            screen,
+            f"Predatori: {predator_count}",
+            20,
+            y_offset,
+            c.RED,
+            c.FONT_SIZE_MEDIUM,
         )
         draw_text(
-            screen, f"Prede: {prey_count}", 20, y_offset + 25, BLUE, FONT_SIZE_MEDIUM
+            screen,
+            f"Prede: {prey_count}",
+            20,
+            y_offset + 25,
+            c.BLUE,
+            c.FONT_SIZE_MEDIUM,
         )
 
         # Time remaining
@@ -109,13 +124,12 @@ class SimulationScreen:
             f"Tempo: {minutes:02d}:{seconds:02d}",
             20,
             y_offset + 50,
-            WHITE,
-            FONT_SIZE_MEDIUM,
+            c.WHITE,
+            c.FONT_SIZE_MEDIUM,
         )
 
         # Speed indicator
         speed = simulation_state.get("speed", 1)
         draw_text(
-            screen, f"Velocità: {speed}x", 20, y_offset + 75, WHITE, FONT_SIZE_SMALL
+            screen, f"Velocità: {speed}x", 20, y_offset + 75, c.WHITE, c.FONT_SIZE_SMALL
         )
-

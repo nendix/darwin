@@ -7,7 +7,7 @@ import random
 import pygame
 from typing import List, Tuple, Optional
 
-from ..config import *
+from darwin import config as c
 
 
 class Entity:
@@ -55,8 +55,8 @@ class Entity:
         new_y = self.y + math.sin(direction) * distance
 
         # Keep within screen bounds
-        self.x = max(10, min(SCREEN_WIDTH - 10, new_x))
-        self.y = max(10, min(SCREEN_HEIGHT - 10, new_y))
+        self.x = max(10, min(c.SCREEN_WIDTH - 10, new_x))
+        self.y = max(10, min(c.SCREEN_HEIGHT - 10, new_y))
 
     def check_collision(self, entities):
         """Check for collision with entities of the same species and resolve"""
@@ -90,10 +90,10 @@ class Entity:
 
                     # Keep within bounds after separation
                     self.x = max(
-                        entity_radius, min(SCREEN_WIDTH - entity_radius, self.x)
+                        entity_radius, min(c.SCREEN_WIDTH - entity_radius, self.x)
                     )
                     self.y = max(
-                        entity_radius, min(SCREEN_HEIGHT - entity_radius, self.y)
+                        entity_radius, min(c.SCREEN_HEIGHT - entity_radius, self.y)
                     )
 
     def move(self, dt: float):
@@ -105,11 +105,11 @@ class Entity:
         self.move_in_direction(self.direction, actual_speed, dt)
 
         # Consume energy for movement
-        self.energy -= MOVEMENT_ENERGY_COST * dt
+        self.energy -= c.MOVEMENT_ENERGY_COST * dt
 
     def update_energy(self, dt: float):
         """Update energy levels and check for death"""
-        self.energy -= ENERGY_DECAY_RATE * dt
+        self.energy -= c.ENERGY_DECAY_RATE * dt
         self.energy = max(0, min(self.max_energy, self.energy))
 
         if self.energy <= 0:
@@ -159,7 +159,7 @@ class Entity:
 
     def check_reproduction_status(self):
         """Check if entity can reproduce"""
-        if self.reproduction_score >= REPRODUCTION_SCORE_THRESHOLD:
+        if self.reproduction_score >= c.REPRODUCTION_SCORE_THRESHOLD:
             self.can_reproduce = True
         else:
             self.can_reproduce = False
