@@ -1,12 +1,12 @@
-
 import math
 import pygame
-from typing import List, Tuple, Optional
+from typing import List, Optional
 
 from .base_entity import Entity
 from darwin import config as c
 from ..genetics.operations import GeneticOperations
 from ..genetics.genomes import PreyGenome, GenomeFactory
+
 
 class Prey(Entity):
 

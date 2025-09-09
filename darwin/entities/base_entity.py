@@ -5,6 +5,7 @@ from typing import List, Optional
 
 from darwin import config as c
 
+
 class Entity:
 
     def __init__(self, x: float, y: float, genome):
@@ -63,8 +64,10 @@ class Entity:
         collision_distance = entity_radius * 2
 
         for other in entities:
-            other_alive = (hasattr(other, 'available') and other.available) or (hasattr(other, 'alive') and other.alive)
-            
+            other_alive = (hasattr(other, "available") and other.available) or (
+                hasattr(other, "alive") and other.alive
+            )
+
             if (
                 other != self
                 and other_alive
@@ -132,8 +135,11 @@ class Entity:
         visible_entities = [
             e
             for e in entities
-            if isinstance(e, entity_type) 
-            and ((hasattr(e, 'available') and e.available) or (hasattr(e, 'alive') and e.alive))
+            if isinstance(e, entity_type)
+            and (
+                (hasattr(e, "available") and e.available)
+                or (hasattr(e, "alive") and e.alive)
+            )
             and self.can_see(e)
         ]
 
@@ -154,4 +160,4 @@ class Entity:
             self.can_reproduce = False
 
     def get_vision_range(self) -> float:
-        return (self.genome.vision / 100.0) * 150
+        return self.genome.vision

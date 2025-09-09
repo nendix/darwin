@@ -9,6 +9,7 @@ from ..genetics.genomes import GenomeFactory
 from ..genetics.operations import GeneticOperations
 from darwin import config as c
 
+
 class Predator(Entity):
     def __init__(self, x: float, y: float, genome: Optional[PredatorGenome] = None):
         if genome is None:
@@ -93,11 +94,15 @@ class Predator(Entity):
             self.random_walk(dt)
 
     def _attack_prey(self, prey):
-        from .prey import Prey  # Import here to avoid circular import
+        from .prey import Prey
 
         if isinstance(prey, Prey):
+            was_alive = prey.alive
             prey.take_damage(self.genome.attack_strength)
-            self.reproduction_score += c.PREDATOR_EATING_GAIN
+
+            # Only get reproduction points if the prey dies from this attack
+            if was_alive and not prey.alive:
+                self.reproduction_score += c.PREDATOR_EATING_GAIN
 
     def _reproduce(self, mate, entities: List[Entity]):
         # Create offspring
@@ -133,7 +138,7 @@ class Predator(Entity):
             pygame.draw.circle(screen, color, (screen_x, screen_y), c.PREDATOR_RADIUS)
 
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
-        vision_range = (self.genome.vision / 100.0) * 150
+        vision_range = self.genome.vision
         half_cone_angle = math.radians(c.PREDATOR_VISION_ANGLE / 2)
 
         # Calculate cone edges
