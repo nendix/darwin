@@ -276,8 +276,6 @@ class PopulationManager:
             parent2.reproduction_score = 0
             parent1.can_reproduce = False
             parent2.can_reproduce = False
-            parent1.seeking_mate = False
-            parent2.seeking_mate = False
 
             return True
 
@@ -301,8 +299,6 @@ class PopulationManager:
             parent2.reproduction_score = 0
             parent1.can_reproduce = False
             parent2.can_reproduce = False
-            parent1.seeking_mate = False
-            parent2.seeking_mate = False
 
             return True
 
