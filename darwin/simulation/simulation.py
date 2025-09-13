@@ -1,4 +1,3 @@
-
 import random
 import time
 from typing import List, Dict, Any, Tuple
@@ -6,6 +5,7 @@ from typing import List, Dict, Any, Tuple
 from ..entities import Predator, Prey, Food, Entity
 from ..genetics.operations import GeneticOperations
 from darwin import config as c
+
 
 class Simulation:
 
@@ -103,7 +103,12 @@ class Simulation:
             self.total_reproductions += new_births
 
         # Remove dead entities
-        self.entities = [e for e in self.entities if (isinstance(e, Food) and e.available) or (not isinstance(e, Food) and e.alive)]
+        self.entities = [
+            e
+            for e in self.entities
+            if (isinstance(e, Food) and e.available)
+            or (not isinstance(e, Food) and e.alive)
+        ]
 
         # Maintain food supply
         self._spawn_food()
@@ -214,6 +219,7 @@ class Simulation:
         # We'll use a different approach in the entity reproduction methods
         pass
 
+
 class PopulationManager:
 
     @staticmethod
@@ -226,14 +232,14 @@ class PopulationManager:
         predators = [e for e in entities if isinstance(e, Predator) and e.can_reproduce]
         for i, predator1 in enumerate(predators):
             for predator2 in predators[i + 1 :]:
-                if predator1.distance_to(predator2) <= c.PREDATOR_RADIUS * 10:
+                if predator1.distance_to(predator2) <= c.ENTITY_RADIUS * 10:
                     reproduction_pairs.append((predator1, predator2))
 
         # Check prey reproduction
         prey = [e for e in entities if isinstance(e, Prey) and e.can_reproduce]
         for i, prey1 in enumerate(prey):
             for prey2 in prey[i + 1 :]:
-                if prey1.distance_to(prey2) <= c.PREY_RADIUS * 10:
+                if prey1.distance_to(prey2) <= c.ENTITY_RADIUS * 10:
                     reproduction_pairs.append((prey1, prey2))
 
         return reproduction_pairs

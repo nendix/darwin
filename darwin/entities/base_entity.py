@@ -60,7 +60,7 @@ class Entity:
         self.y = new_y % c.SCREEN_HEIGHT
 
     def check_collision(self, entities):
-        entity_radius = 6
+        entity_radius = c.ENTITY_RADIUS
         collision_distance = entity_radius * 2
 
         for other in entities:

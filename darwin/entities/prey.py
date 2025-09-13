@@ -60,7 +60,7 @@ class Prey(Entity):
                 self.turn_towards(closest_food, 0.15)
 
                 # Check for eating
-                if self.distance_to(closest_food) <= c.PREY_RADIUS + c.FOOD_RADIUS:
+                if self.distance_to(closest_food) <= c.ENTITY_RADIUS + c.FOOD_RADIUS:
                     self._eat_food(closest_food, entities)
             else:
                 self.random_walk(dt)
@@ -77,7 +77,7 @@ class Prey(Entity):
             self.turn_towards(closest_mate, 0.15)
 
             # Check for reproduction
-            if self.distance_to(closest_mate) <= c.PREY_RADIUS * 2:
+            if self.distance_to(closest_mate) <= c.ENTITY_RADIUS * 2:
                 self._reproduce(closest_mate, entities)
         else:
             self.random_walk(dt)
@@ -124,5 +124,5 @@ class Prey(Entity):
                 )
 
             # Draw prey
-            color = c.BLUE if not self.can_reproduce else c.YELLOW
-            pygame.draw.circle(screen, color, (screen_x, screen_y), c.PREY_RADIUS)
+            color = c.BLUE if not self.can_reproduce else c.PURPLE
+            pygame.draw.circle(screen, color, (screen_x, screen_y), c.ENTITY_RADIUS)

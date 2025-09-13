@@ -70,7 +70,7 @@ class Predator(Entity):
             self.turn_towards(closest_prey, 0.2)
 
             # Check for attack
-            if self.distance_to(closest_prey) <= c.PREDATOR_RADIUS + c.PREY_RADIUS:
+            if self.distance_to(closest_prey) <= c.ENTITY_RADIUS + c.ENTITY_RADIUS:
                 self._attack_prey(closest_prey)
         else:
             self.target_prey = None
@@ -88,7 +88,7 @@ class Predator(Entity):
             self.turn_towards(closest_mate, 0.15)
 
             # Check for reproduction
-            if self.distance_to(closest_mate) <= c.PREDATOR_RADIUS * 2:
+            if self.distance_to(closest_mate) <= c.ENTITY_RADIUS * 2:
                 self._reproduce(closest_mate, entities)
         else:
             self.random_walk(dt)
@@ -134,8 +134,8 @@ class Predator(Entity):
                 self._draw_vision_cone(screen, screen_x, screen_y)
 
             # Draw predator
-            color = c.RED if not self.can_reproduce else c.ORANGE
-            pygame.draw.circle(screen, color, (screen_x, screen_y), c.PREDATOR_RADIUS)
+            color = c.RED if not self.can_reproduce else c.YELLOW
+            pygame.draw.circle(screen, color, (screen_x, screen_y), c.ENTITY_RADIUS)
 
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
         vision_range = self.genome.vision
