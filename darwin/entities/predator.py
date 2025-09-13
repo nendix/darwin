@@ -18,8 +18,12 @@ class Predator(Entity):
         self.target_prey = None
 
     def can_see(self, target: Entity) -> bool:
-        # First check distance
-        if not super().can_see(target):
+        # Predators have enhanced vision range (1.5x)
+        distance = self.distance_to(target)
+        vision_range = self.genome.vision * 1.5  # Enhanced vision for predators
+
+        # First check enhanced distance
+        if distance > vision_range:
             return False
 
         # Then check if in vision cone
@@ -77,16 +81,14 @@ class Predator(Entity):
             self.random_walk(dt)
 
     def _seek_mate(self, entities: List[Entity], dt: float):
-        # Find closest visible mate using vision system
         potential_mates = [
             e
             for e in entities
             if isinstance(e, Predator) and e.alive and e.can_reproduce and e != self
         ]
-        
-        # Filter by vision range and check if can see them
+
         visible_mates = [mate for mate in potential_mates if self.can_see(mate)]
-        
+
         if visible_mates:
             closest_mate = min(visible_mates, key=self.distance_to)
             self.turn_towards(closest_mate, 0.15)
@@ -142,7 +144,7 @@ class Predator(Entity):
             pygame.draw.circle(screen, color, (screen_x, screen_y), c.ENTITY_RADIUS)
 
     def _draw_vision_cone(self, screen: pygame.Surface, screen_x: int, screen_y: int):
-        vision_range = self.genome.vision
+        vision_range = self.genome.vision * 1.5
         half_cone_angle = math.radians(c.PREDATOR_VISION_ANGLE / 2)
 
         # Calculate cone edges
