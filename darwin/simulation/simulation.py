@@ -17,8 +17,6 @@ class Simulation:
         self.show_vision = params["show_vision"]
         self.start_time = time.time()
 
-        # Statistics tracking
-        self.generation = 1
         self.total_reproductions = 0
         self.total_mutations = 0
         self.population_history = {"predators": [], "prey": [], "time": []}
@@ -47,9 +45,6 @@ class Simulation:
             y = random.uniform(50, c.SCREEN_HEIGHT - 50)
             prey = Prey(x, y)
             self.entities.append(prey)
-
-        # Set simulation stats reference
-        self._setup_entity_statistics_tracking()
 
     def _spawn_food(self):
         current_food = len(
@@ -160,7 +155,6 @@ class Simulation:
         prey_stats = self._calculate_genome_statistics("prey")
 
         return {
-            "generation": self.generation,
             "final_populations": {"predators": predator_count, "prey": prey_count},
             "survival_stats": {
                 "predator_survival_rate": predator_survival_rate,
@@ -213,11 +207,6 @@ class Simulation:
             }
 
         return {}
-
-    def _setup_entity_statistics_tracking(self):
-        # This is a workaround to pass statistics tracking to entities
-        # We'll use a different approach in the entity reproduction methods
-        pass
 
 
 class PopulationManager:
