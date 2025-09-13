@@ -150,7 +150,7 @@ class Entity:
 
     def can_see(self, target) -> bool:
         distance = self.distance_to(target)
-        vision_range = self.get_vision_range()
+        vision_range = self.genome.vision
         return distance <= vision_range
 
     def check_reproduction_status(self):
@@ -158,6 +158,3 @@ class Entity:
             self.can_reproduce = True
         else:
             self.can_reproduce = False
-
-    def get_vision_range(self) -> float:
-        return self.genome.vision

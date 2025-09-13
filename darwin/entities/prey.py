@@ -66,14 +66,18 @@ class Prey(Entity):
                 self.random_walk(dt)
 
     def _seek_mate(self, entities: List[Entity], dt: float):
+        # Find closest visible mate using vision system
         potential_mates = [
             e
             for e in entities
             if isinstance(e, Prey) and e.alive and e.can_reproduce and e != self
         ]
 
-        if potential_mates:
-            closest_mate = min(potential_mates, key=self.distance_to)
+        # Filter by vision range and check if can see them
+        visible_mates = [mate for mate in potential_mates if self.can_see(mate)]
+
+        if visible_mates:
+            closest_mate = min(visible_mates, key=self.distance_to)
             self.turn_towards(closest_mate, 0.15)
 
             # Check for reproduction
@@ -118,7 +122,7 @@ class Prey(Entity):
         ):
             # Draw vision range if enabled (simple circle outline)
             if show_vision:
-                vision_range = self.get_vision_range()
+                vision_range = self.genome.vision
                 pygame.draw.circle(
                     screen, c.BLUE, (screen_x, screen_y), int(vision_range), 2
                 )

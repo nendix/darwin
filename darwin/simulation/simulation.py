@@ -1,9 +1,8 @@
 import random
 import time
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 
 from ..entities import Predator, Prey, Food, Entity
-from ..genetics.operations import GeneticOperations
 from darwin import config as c
 
 
