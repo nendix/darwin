@@ -106,9 +106,10 @@ class Predator(Entity):
             was_alive = prey.alive
             prey.take_damage(self.genome.attack_strength)
 
-            # Only get reproduction points if the prey dies from this attack
             if was_alive and not prey.alive:
-                self.reproduction_score += c.PREDATOR_EATING_GAIN
+                self.reproduction_score += c.PREDATOR_REPRODUCTION_GAIN
+                energy_gain = c.EATING_ENERGY_GAIN
+                self.energy = min(self.max_energy, self.energy + energy_gain)
 
     def _reproduce(self, mate, entities: List[Entity]):
         # Create offspring

@@ -97,17 +97,18 @@ class Entity:
                     self.y = self.y % c.SCREEN_HEIGHT
 
     def move(self, dt: float):
-        speed_factor = self.genome.speed / 100.0
-        base_speed = 50
-        actual_speed = speed_factor * base_speed
+        speed = self.genome.speed
 
-        self.move_in_direction(self.direction, actual_speed, dt)
+        self.move_in_direction(self.direction, speed, dt)
 
         self.energy -= c.MOVEMENT_ENERGY_COST * dt
 
+        if self.energy <= 0:
+            self.alive = False
+
     def update_energy(self, dt: float):
         self.energy -= c.ENERGY_DECAY_RATE * dt
-        self.energy = max(0, min(self.max_energy, self.energy))
+        self.energy = min(self.max_energy, self.energy)
 
         if self.energy <= 0:
             self.alive = False

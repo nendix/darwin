@@ -2,13 +2,14 @@ import pygame
 
 from darwin import config as c
 
+
 class Food:
 
     def __init__(self, x: float, y: float):
         self.x = x
         self.y = y
         self.available = True
-        self.energy_value = c.FOOD_ENERGY_GAIN
+        self.energy_value = c.EATING_ENERGY_GAIN
 
     def draw(self, screen: pygame.Surface):
         screen_x = int(self.x)

@@ -88,7 +88,7 @@ class Prey(Entity):
 
     def _eat_food(self, food, entities: List[Entity]):
         self.energy = min(self.max_energy, self.energy + food.energy_value)
-        self.reproduction_score += c.PREY_EATING_GAIN
+        self.reproduction_score += c.PREY_REPRODUCTION_GAIN
         food.available = False
         entities.remove(food)
 
