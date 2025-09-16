@@ -18,18 +18,14 @@ class Predator(Entity):
         self.target_prey = None
 
     def can_see(self, target: Entity) -> bool:
-        # Predators have enhanced vision range (1.5x)
         distance = self.distance_to(target)
         vision_range = self.genome.vision * 1.5  # Enhanced vision for predators
 
-        # First check enhanced distance
+        # First check distance
         if distance > vision_range:
             return False
 
         # Then check if in vision cone
-        return self._is_in_vision_cone(target)
-
-    def _is_in_vision_cone(self, target: Entity) -> bool:
         angle_to_target = self.angle_to(target)
         angle_diff = abs(angle_to_target - self.direction)
 
