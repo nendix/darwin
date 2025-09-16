@@ -1,8 +1,13 @@
 # Darwin
-Darwin è un simulatore di evoluzione 2D che utilizza algoritmi genetici per simulare l'evoluzione di due specie: predatori e prede. Il progetto dimostra i principi dell'evoluzione naturale attraverso selezione, riproduzione, mutazione e adattamento ambientale.
+Darwin è un simulatore di evoluzione 2D che utilizza algoritmi genetici per
+simulare l'evoluzione di due specie: predatori e prede. Il progetto dimostra i
+principi dell'evoluzione naturale attraverso selezione, riproduzione, mutazione
+e adattamento ambientale.
 
 ## Funzionamento
-Vengono creati randomicamente due pool di specie, prede e predatori che interagiranno all'interno del mondo della simulazione, avendo come obiettivo primario la riproduzione.
+Vengono creati randomicamente due pool di specie, prede e predatori che
+interagiranno all'interno del mondo della simulazione, avendo come obiettivo
+primario la riproduzione.
 
 ## Schermate
 - **Menu**: Configurazione parametri di simulazione
@@ -86,13 +91,11 @@ make run
 - [ ] Testing automatizzato
 
 ## Contribuire
+Contributi benvenuti! 
 
-Contributi benvenuti! Per contribuire:
-
+Per contribuire:
 1. Fork del repository
 2. Crea un branch per la tua feature
 3. Commit delle modifiche
 4. Push al branch
 5. Apri una Pull Request
-
-�
