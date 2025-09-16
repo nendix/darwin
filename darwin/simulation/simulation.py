@@ -17,11 +17,10 @@ class Simulation:
         self.start_time = time.time()
 
         self.total_reproductions = 0
-        self.total_mutations = 0
         self.population_history = {"predators": [], "prey": [], "time": []}
 
         # Add simulation stats reference to entities for tracking
-        self.simulation_stats = {"total_reproductions": 0, "total_mutations": 0}
+        self.simulation_stats = {"total_reproductions": 0}
 
         # Initialize populations
         self._initialize_populations()
@@ -161,7 +160,6 @@ class Simulation:
             },
             "evolution_info": {
                 "total_reproductions": self.total_reproductions,
-                "total_mutations": self.total_mutations,
             },
             "genome_statistics": {"predators": predator_stats, "prey": prey_stats},
             "population_history": self.population_history,
